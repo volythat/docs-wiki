@@ -18,4 +18,5 @@
 |---|---|---|
 | `id` | string | Mã đơn |
 | `items` | array | Danh sách sản phẩm |
+| `note` | string | Ghi chú đơn |
 | `status` | enum | pending \| paid \| shipped |

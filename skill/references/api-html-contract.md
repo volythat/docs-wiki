@@ -63,7 +63,9 @@ vars {
 
 Với mỗi `<section class="endpoint">`:
 1. Tên file = `<id>.bru`.
-2. Khối `meta`: `name` = nội dung `<h3>`, `type: http`, `seq` = `data-seq` (mặc định thứ tự xuất hiện).
+2. Khối `meta`: `name` = nhãn mô tả trong `<h3>`, `type: http`, `seq` = `data-seq` (mặc định thứ tự xuất hiện).
+   - Nếu `<h3>` có trang trí method/path (vd `<span class="method">POST</span> /orders — Tạo đơn hàng`),
+     lấy phần nhãn sau dấu `—` (`Tạo đơn hàng`). Nếu không có dấu `—`, lấy toàn bộ text đã strip thẻ.
 3. Khối method (`get`/`post`/...) theo `data-method` (chữ thường):
    - `url: {{baseUrl}}<data-path>`
    - `body: json` nếu có `pre.request-body`, ngược lại `body: none`
