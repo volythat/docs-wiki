@@ -16,11 +16,13 @@ PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa ngườ
     <div class="header" data-key="Content-Type" data-value="application/json"></div>
   </div>
 
+  <h4>Request body</h4>
   <pre class="request-body" data-ref="data-model.md#order"><code>{
   "items": [{ "productId": "string", "qty": 0 }],
   "note": "string"
 }</code></pre>
 
+  <h4>Response 201</h4>
   <pre class="response" data-status="201"><code>{
   "id": "string",
   "status": "pending"
@@ -30,7 +32,9 @@ PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa ngườ
 
 **Thuộc tính bắt buộc trên `<section>`:** `id` (slug tiếng Anh), `data-method`, `data-path`.
 **Tuỳ chọn:** `data-auth` (`none|bearer|basic`, mặc định `none`), `data-seq` (thứ tự trong Bruno).
-**`data-ref`** trên request-body: trỏ tới entity trong `data-model.md` để kiểm tra field.
+**`data-ref`** trên request-body: con trỏ LOGIC tới entity trong `_sources/data-model.md`
+(dạng `data-model.md#<entity>`) để kiểm tra field — KHÔNG phải đường dẫn file tương đối từ
+`api/api.html`. Khi dò lệch, resolve `<entity>` trong `_sources/data-model.md`.
 
 ## Bố cục Bruno sinh ra
 
