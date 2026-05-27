@@ -63,12 +63,14 @@ api/bruno/
 }
 ```
 
-`environments/local.bru`:
+`environments/<bruno.env>.bru` (tên file = `bruno.env`, mặc định `local`):
 ```
 vars {
-  baseUrl: http://localhost:3000
+  baseUrl: <bruno.base_url>
 }
 ```
+`<bruno.base_url>` lấy từ `.docswiki.yml` (mặc định `http://localhost:3000`); xem `config.md`.
+Thư mục Bruno sinh ra là `<dirs.bruno>` (mặc định `api/bruno`), không cố định.
 
 ## Thuật toán map endpoint → .bru
 
