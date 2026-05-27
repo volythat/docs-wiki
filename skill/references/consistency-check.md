@@ -1,6 +1,9 @@
 # Kiểm tra nhất quán (chạy KHI người dùng yêu cầu)
 
-Quét toàn bộ `docs/` và báo cáo các loại lệch. KHÔNG tự chạy sau mỗi lần sửa.
+Quét toàn bộ `<docs_dir>` và báo cáo các loại lệch. KHÔNG tự chạy sau mỗi lần sửa.
+
+> Đường dẫn dưới đây dùng tên mặc định (`_sources`, `api/api.html`, `api/bruno`). Resolve
+> theo `dirs.*` trong `.docswiki.yml` nếu dự án đặt tên khác (xem `config.md`).
 
 ## 5 loại lệch
 
