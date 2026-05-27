@@ -37,4 +37,4 @@ git push
 
 ## Remote
 
-`git@github.com:volythat/docs-wiki.git` — SSH key: `~/.ssh/volythat_github`
+`git@github.com:volythat/docs-wiki.git`
