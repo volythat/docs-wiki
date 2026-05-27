@@ -33,9 +33,9 @@ Dưới đây `<docs_dir>`, `<dirs.sources>`… là giá trị resolve từ conf
 | "cập nhật mục lục" | Sinh lại `README.md` bằng cách QUÉT `<docs_dir>` (không theo danh sách cứng → file mới tự xuất hiện) + mục lục trong `<dirs.api>/api.html`. Dùng `project.name` cho tiêu đề. |
 
 ## Quy tắc ngầm (LUÔN tuân theo)
-1. **Ghi nguồn trước, link sau.** Thêm thông tin mới → ghi vào `_sources`/`api.html` TRƯỚC,
-   rồi mới link từ doc dẫn xuất. KHÔNG BAO GIỜ chép định nghĩa vào doc dẫn xuất.
-2. **Anchor tiếng Anh, nội dung tiếng Việt.** Xem `references/reference-conventions.md`.
+1. **Ghi nguồn trước, link sau.** Thêm thông tin mới → ghi vào `<dirs.sources>`/`<dirs.api>/api.html`
+   TRƯỚC, rồi mới link từ doc dẫn xuất. KHÔNG BAO GIỜ chép định nghĩa vào doc dẫn xuất.
+2. **Anchor theo `lang.anchor`, nội dung theo `lang.content`** (mặc định EN/VI). Xem `references/reference-conventions.md`.
 3. **Kiểm tra nhất quán chỉ khi được yêu cầu** — không tự chạy sau mỗi lần sửa.
 4. **api.html là gốc của API**, `.bru` là sản phẩm sinh ra. Không sửa `.bru` bằng tay.
 
