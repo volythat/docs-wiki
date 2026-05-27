@@ -5,12 +5,22 @@ Quét toàn bộ `docs/` và báo cáo các loại lệch. KHÔNG tự chạy sa
 ## 5 loại lệch
 
 ### 1. Link gãy
-Mọi link dạng `(_sources/<file>.md#<anchor>)` hoặc `(api/api.html#<anchor>)` phải trỏ tới
-anchor tồn tại.
-- Trích mọi anchor đích trong link bằng grep.
-- Với mỗi đích: kiểm tra heading `### <anchor>`, `<a id="<anchor>">`, hoặc `id="<anchor>"`
-  có tồn tại trong file nguồn không.
-- Báo link không tìm thấy đích.
+Mọi link markdown `(<path>#<anchor>)` trỏ tới một file trong docs PHẢI có anchor tồn tại.
+Có HAI style đường dẫn cùng hợp lệ — phải quét cả hai:
+- **Doc dẫn xuất** (overview/cms/mobile/design ở gốc `docs/`): trỏ kèm tiền tố thư mục,
+  vd `(_sources/glossary.md#shopping-cart)`, `(api/api.html#create-order)`.
+- **Link nội bộ giữa các file `_sources/`**: trỏ kiểu sibling, KHÔNG có tiền tố `_sources/`,
+  vd `(glossary.md#shopping-cart)`, `(data-model.md#order)` (xem `flows.md`).
+
+Cách quét:
+- Grep mọi link `(<đường-dẫn>.md#<anchor>)` và `(<đường-dẫn>.html#<anchor>)` trong `docs/`.
+- **Base resolve = thư mục chứa file có link** (không phải gốc `docs/`). Quy tắc này đúng cho
+  cả hai style: doc dẫn xuất ở gốc → `_sources/glossary.md` ra `docs/_sources/glossary.md`;
+  `flows.md` trong `_sources/` → `glossary.md` ra `docs/_sources/glossary.md`.
+- Với mỗi đích: kiểm tra `### <anchor>`, `<a id="<anchor>">`, hoặc `id="<anchor>"` có tồn tại
+  trong file đã resolve không. Báo link không tìm thấy đích.
+- **Bỏ qua** link nằm trong dòng hướng dẫn (blockquote bắt đầu bằng `>`): đó là ví dụ minh hoạ
+  cách viết link, không phải tham chiếu thật (vd dòng đầu mỗi file `_sources/`).
 
 ### 2. Term/field mồ côi
 Khái niệm được nhắc trong doc dẫn xuất nhưng chưa định nghĩa trong `_sources`.
