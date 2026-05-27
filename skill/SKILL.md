@@ -25,8 +25,9 @@ Dưới đây `<docs_dir>`, `<dirs.sources>`… là giá trị resolve từ conf
 
 | Người dùng nói | Hành động |
 |---|---|
-| "khởi tạo docs" | Copy `templates/` vào `<docs_dir>`, KHÔNG ghi đè file đã tồn tại. Nếu cwd chưa có `.docswiki.yml`, sinh kèm từ `templates/.docswiki.yml`. Báo các file đã tạo. |
+| "khởi tạo docs" | **Kiểm tra trước:** nếu cwd chưa có `.docswiki.yml` VÀ thư mục `docs` đã tồn tại → DỪNG, cảnh báo nguy cơ ghi đè lên docs cũ, đề xuất hai lựa chọn: (A) tạo `.docswiki.yml` với `docs_dir` khác trước (ví dụ `docs-v2`) rồi chạy lại, hoặc (B) xác nhận muốn scaffold vào folder hiện tại (rõ ràng file đã có sẽ không bị ghi đè nhưng file mới sẽ được thêm vào). Chỉ tiếp tục khi người dùng chọn. Nếu đã có `.docswiki.yml`: copy `templates/` vào `<docs_dir>`, KHÔNG ghi đè file đã tồn tại. Nếu cwd chưa có `.docswiki.yml` và người dùng xác nhận (B): thực hiện đồng thời sinh `.docswiki.yml`. Báo các file đã tạo. |
 | "thêm/sửa thuật ngữ\|field\|endpoint\|flow X" | Ghi định nghĩa vào `<dirs.sources>` (hoặc `<dirs.api>/api.html`), anchor theo `lang.anchor`, nội dung theo `lang.content`, quy ước ở `references/reference-conventions.md`; gợi ý chỗ nên link. |
+| "thêm file docs [tên]" | Tạo `<docs_dir>/[tên].md` theo cấu trúc tài liệu dẫn xuất: tiêu đề, mô tả ngắn, các section với link tới `<dirs.sources>/` (KHÔNG chép định nghĩa). Nếu có thực thể/thuật ngữ liên quan chưa định nghĩa trong `<dirs.sources>`, hỏi người dùng có muốn thêm vào nguồn trước không. Sau khi tạo, "cập nhật mục lục" sẽ tự nhận file này (scan-based, không cần khai báo thêm). |
 | "sinh bruno" | Theo `references/api-html-contract.md`: đọc `<dirs.api>/api.html`, sinh/cập nhật `<dirs.bruno>`; `baseUrl`/tên env theo `bruno.*`. |
 | "kiểm tra nhất quán" | Theo `references/consistency-check.md`: quét `<docs_dir>`, xuất báo cáo. CHỈ chạy khi được yêu cầu. |
 | "X dùng ở đâu" | Grep mọi link trỏ tới anchor của X trong `<docs_dir>`; liệt kê file + dòng. |
