@@ -14,8 +14,9 @@ không có runtime, test suite, hay build step.
 
 - **Không bao giờ commit `docs/`** — thư mục này untracked theo thiết kế.
 - Sau mỗi lần sửa file trong `skill/`: chạy `./install/install-claude.sh` để đồng bộ sang `~/.claude/`.
-- Commit message bằng tiếng Việt, theo pattern: `feat:` / `fix:` / `docs:` / `chore:`.
+- Commit message bằng tiếng Anh, theo pattern: `feat:` / `fix:` / `docs:` / `chore:`.
 - Chỉ commit khi người dùng yêu cầu.
+
 
 ## Workflow thường gặp
 
