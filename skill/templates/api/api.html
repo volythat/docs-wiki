@@ -2,51 +2,115 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>API</title>
 <style>
+  :root {
+    --bg: #ffffff; --fg: #1a2027; --muted: #5b6b7b; --border: #e6e9ee;
+    --sidebar: #f7f8fa; --code-bg: #0f172a; --code-fg: #e2e8f0; --accent: #2563eb;
+    --get: #047857; --get-bg: #ecfdf5;
+    --post: #1d4ed8; --post-bg: #eff6ff;
+    --put: #b45309; --put-bg: #fffbeb;
+    --del: #b91c1c; --del-bg: #fef2f2;
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, sans-serif; color: #1a1a1a; }
-  .layout { display: flex; }
-  nav { width: 240px; border-right: 1px solid #e5e5e5; padding: 16px; position: sticky;
-        top: 0; height: 100vh; overflow: auto; }
-  nav a { display: block; padding: 4px 0; color: #2563eb; text-decoration: none; }
-  main { flex: 1; padding: 24px 32px; max-width: 820px; }
-  .endpoint { border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin: 16px 0; }
-  .method { font-weight: 700; font-family: monospace; padding: 2px 8px; border-radius: 4px;
-            background: #ecfdf5; color: #047857; }
-  pre { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 6px; overflow: auto; }
-  h3 { margin-top: 0; }
+  body { margin: 0; color: var(--fg); background: var(--bg); line-height: 1.55;
+         font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .layout { display: grid; grid-template-columns: 240px 1fr; }
+
+  /* Sidebar / mục lục */
+  nav { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 20px 16px;
+        background: var(--sidebar); border-right: 1px solid var(--border); }
+  nav .brand { font-weight: 700; font-size: 18px; margin-bottom: 16px; }
+  nav a { display: block; padding: 6px 10px; margin: 2px 0; border-radius: 6px;
+          color: var(--muted); text-decoration: none; font-size: 14px; }
+  nav a:hover { background: #fff; color: var(--accent); }
+
+  main { min-width: 0; }
+  main > h1 { padding: 28px 32px 0; margin: 0; font-size: 26px; }
+  .intro { padding: 4px 32px 8px; color: var(--muted); }
+
+  /* Một endpoint = hai pane: mô tả (trái) + code (phải) */
+  .endpoint { display: grid; grid-template-columns: 1fr 1fr;
+              border-top: 1px solid var(--border); }
+  .endpoint-doc { padding: 28px 32px; min-width: 0; }
+  .endpoint-code { padding: 28px 32px; background: #fafbfc;
+                   border-left: 1px solid var(--border); min-width: 0; }
+  .endpoint h3 { margin: 0 0 12px; font-size: 20px; }
+
+  .route { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; flex-wrap: wrap; }
+  .method { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700;
+            font-size: 12px; letter-spacing: .5px; padding: 3px 8px; border-radius: 5px;
+            color: var(--post); background: var(--post-bg); }
+  .path { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px;
+          background: #eef1f5; padding: 3px 8px; border-radius: 5px; }
+  .endpoint[data-method="GET"]    .method { color: var(--get); background: var(--get-bg); }
+  .endpoint[data-method="POST"]   .method { color: var(--post); background: var(--post-bg); }
+  .endpoint[data-method="PUT"]    .method,
+  .endpoint[data-method="PATCH"]  .method { color: var(--put); background: var(--put-bg); }
+  .endpoint[data-method="DELETE"] .method { color: var(--del); background: var(--del-bg); }
+
+  .desc { color: var(--muted); margin: 0 0 18px; }
+
+  .section-label { font-size: 12px; text-transform: uppercase; letter-spacing: .5px;
+                   color: var(--muted); margin: 0 0 6px; }
+  .headers { margin: 0; }
+  .header { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px;
+            padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .header::before { content: attr(data-key) ": " attr(data-value); }
+
+  .endpoint-code h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .5px;
+                      color: var(--muted); margin: 0 0 6px; }
+  .endpoint-code h4 + pre { margin-top: 0; }
+  pre { background: var(--code-bg); color: var(--code-fg); padding: 14px 16px;
+        border-radius: 8px; overflow: auto; font-size: 13px; line-height: 1.5;
+        margin: 0 0 20px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  pre:last-child { margin-bottom: 0; }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    .endpoint { grid-template-columns: 1fr; }
+    .endpoint-code { border-left: 0; border-top: 1px solid var(--border); }
+  }
 </style>
 </head>
 <body>
 <div class="layout">
   <nav id="toc">
-    <strong>Mục lục</strong>
+    <div class="brand">API</div>
     <a href="#create-order">Tạo đơn hàng</a>
   </nav>
   <main>
     <h1>Tài liệu API</h1>
+    <p class="intro">Mỗi endpoint mô tả ở cột trái, request/response ở cột phải.</p>
 
     <section class="endpoint" id="create-order"
              data-method="POST" data-path="/orders" data-auth="bearer" data-seq="1">
-      <h3><span class="method">POST</span> /orders — Tạo đơn hàng</h3>
-      <p class="desc">Tạo một đơn hàng mới từ giỏ hàng hiện tại.</p>
-
-      <div class="headers">
-        <div class="header" data-key="Content-Type" data-value="application/json"></div>
+      <div class="endpoint-doc">
+        <h3>Tạo đơn hàng</h3>
+        <div class="route">
+          <span class="method">POST</span>
+          <span class="path">/orders</span>
+        </div>
+        <p class="desc">Tạo một đơn hàng mới từ giỏ hàng hiện tại.</p>
+        <p class="section-label">Headers</p>
+        <div class="headers">
+          <div class="header" data-key="Content-Type" data-value="application/json"></div>
+        </div>
       </div>
-
-      <h4>Request body</h4>
-      <pre class="request-body" data-ref="data-model.md#order"><code>{
+      <div class="endpoint-code">
+        <h4>Request body</h4>
+        <pre class="request-body" data-ref="data-model.md#order"><code>{
   "items": [{ "productId": "string", "qty": 0 }],
   "note": "string"
 }</code></pre>
-
-      <h4>Response 201</h4>
-      <pre class="response" data-status="201"><code>{
+        <h4>Response 201</h4>
+        <pre class="response" data-status="201"><code>{
   "id": "string",
   "status": "pending"
 }</code></pre>
+      </div>
     </section>
   </main>
 </div>

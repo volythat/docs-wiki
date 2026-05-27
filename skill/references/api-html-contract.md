@@ -36,6 +36,13 @@ PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa ngườ
 (dạng `data-model.md#<entity>`) để kiểm tra field — KHÔNG phải đường dẫn file tương đối từ
 `api/api.html`. Khi dò lệch, resolve `<entity>` trong `_sources/data-model.md`.
 
+**Wrapper trình bày được phép.** Generator parse theo CLASS/THUỘC TÍNH (`section.endpoint`,
+`data-*`, `h3`, `div.headers > div.header`, `pre.request-body`, `pre.response`), KHÔNG theo vị
+trí trong DOM. Template ships có thể bọc nội dung trong `div.endpoint-doc` / `div.endpoint-code`,
+thêm `div.route`, `p.section-label`… để làm đẹp — miễn các phần tử/thuộc tính bắt buộc còn nguyên.
+`<h3>` có thể là nhãn phẳng (vd `<h3>Tạo đơn hàng</h3>`) vì method/path đã nằm ở `data-method`/
+`data-path`; `div.route` chỉ là trang trí, generator không đọc.
+
 ## Bố cục Bruno sinh ra
 
 ```
