@@ -37,6 +37,7 @@ commands:
 | **"init docs"** | Scaffolds the `docs/` folder from templates and generates `.docswiki.yml`. Never overwrites existing files. |
 | **"add/update term\|field\|endpoint\|flow X"** | Writes the definition into the source (`_sources/` or `api/api.html`), then suggests where to link. |
 | **"add docs file [name]"** | Creates `docs/[name].md` as a derived doc: title, short description, sections with links to `_sources/` (no copied definitions). If related entities are missing from `_sources/`, asks whether to add them first. The next "update table of contents" picks it up automatically. |
+| **"analyse old docs from [folder]"** | **Phase 1:** Reads all files in `[folder]` and categorises content into: definitions → `_sources/`, summaries/views → derived doc files, endpoints → `api.html`, unclear → listed separately. Outputs a classification report and asks for confirmation. **Phase 2:** Only after confirmation, creates files in order — sources first, derived docs second. Nothing is created before the user approves. |
 | **"generate bruno"** | Reads `api/api.html` and generates/updates a Bruno collection under `api/bruno/`. |
 | **"check consistency"** | Scans all of `docs/` and reports 5 drift types (broken links, orphan terms, duplicate definitions, `.bru` drift, missing fields). |
 | **"where is X used"** | Lists every file + line that links to X's anchor. |
