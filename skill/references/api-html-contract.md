@@ -1,6 +1,6 @@
 # Hợp đồng cấu trúc api.html ↔ sinh Bruno
 
-`api/api.html` là GỐC của API. Skill đọc nó để sinh `api/bruno/`. Vì vậy mỗi endpoint
+`<dirs.api>/api.html` là GỐC của API. Skill đọc nó để sinh `<dirs.bruno>/`. Vì vậy mỗi endpoint
 PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa người soạn và skill.
 
 ## Cấu trúc một endpoint
@@ -30,11 +30,11 @@ PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa ngườ
 </section>
 ```
 
-**Thuộc tính bắt buộc trên `<section>`:** `id` (slug tiếng Anh), `data-method`, `data-path`.
+**Thuộc tính bắt buộc trên `<section>`:** `id` (slug theo `lang.anchor`), `data-method`, `data-path`.
 **Tuỳ chọn:** `data-auth` (`none|bearer|basic`, mặc định `none`), `data-seq` (thứ tự trong Bruno).
-**`data-ref`** trên request-body: con trỏ LOGIC tới entity trong `_sources/data-model.md`
+**`data-ref`** trên request-body: con trỏ LOGIC tới entity trong `<dirs.sources>/data-model.md`
 (dạng `data-model.md#<entity>`) để kiểm tra field — KHÔNG phải đường dẫn file tương đối từ
-`api/api.html`. Khi dò lệch, resolve `<entity>` trong `_sources/data-model.md`.
+`<dirs.api>/api.html`. Khi dò lệch, resolve `<entity>` trong `<dirs.sources>/data-model.md`.
 
 **Wrapper trình bày được phép.** Generator parse theo CLASS/THUỘC TÍNH (`section.endpoint`,
 `data-*`, `h3`, `div.headers > div.header`, `pre.request-body`, `pre.response`), KHÔNG theo vị
@@ -43,7 +43,7 @@ thêm `div.route`, `p.section-label`… để làm đẹp — miễn các phần
 `<h3>` có thể là nhãn phẳng (vd `<h3>Tạo đơn hàng</h3>`) vì method/path đã nằm ở `data-method`/
 `data-path`; `div.route` chỉ là trang trí, generator không đọc.
 
-## Bố cục Bruno sinh ra
+## Bố cục Bruno sinh ra (mặc định)
 
 ```
 api/bruno/

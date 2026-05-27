@@ -10,11 +10,11 @@
 
 | Loại | Nơi định nghĩa | Anchor | Ví dụ link |
 |---|---|---|---|
-| Thuật ngữ | `_sources/glossary.md` | heading `### <english-slug>` | `[Giỏ hàng](_sources/glossary.md#shopping-cart)` |
-| Entity | `_sources/data-model.md` | heading `### <english-slug>` | `[Người dùng](_sources/data-model.md#user)` |
+| Thuật ngữ | `_sources/glossary.md` | heading `### <lang.anchor-slug>` | `[Giỏ hàng](_sources/glossary.md#shopping-cart)` |
+| Entity | `_sources/data-model.md` | heading `### <lang.anchor-slug>` | `[Người dùng](_sources/data-model.md#user)` |
 | Field | `_sources/data-model.md` | `<a id="<entity>-<field>"></a>` trong bảng | `[email](_sources/data-model.md#user-email)` |
-| Flow | `_sources/flows.md` | heading `### <english-slug>` | `[Thanh toán](_sources/flows.md#checkout)` |
-| Endpoint | `api/api.html` | `id="<english-slug>"` trên `<section>` | `[Tạo đơn hàng](api/api.html#create-order)` |
+| Flow | `_sources/flows.md` | heading `### <lang.anchor-slug>` | `[Thanh toán](_sources/flows.md#checkout)` |
+| Endpoint | `api/api.html` | `id="<lang.anchor-slug>"` trên `<section>` | `[Tạo đơn hàng](api/api.html#create-order)` |
 
 ## Quy tắc đặt slug
 - Chữ thường, nối bằng `-`, chỉ ký tự `[a-z0-9-]`.

@@ -2,8 +2,8 @@
 
 Quét toàn bộ `<docs_dir>` và báo cáo các loại lệch. KHÔNG tự chạy sau mỗi lần sửa.
 
-> Đường dẫn dưới đây dùng tên mặc định (`_sources`, `api/api.html`, `api/bruno`). Resolve
-> theo `dirs.*` trong `.docswiki.yml` nếu dự án đặt tên khác (xem `config.md`).
+> Đường dẫn dưới đây dùng tên mặc định (gốc `docs/`, `_sources`, `api/api.html`, `api/bruno`). Resolve
+> theo `docs_dir`/`dirs.*` trong `.docswiki.yml` nếu dự án đặt tên khác (xem `config.md`).
 
 ## 5 loại lệch
 
@@ -16,7 +16,7 @@ Có HAI style đường dẫn cùng hợp lệ — phải quét cả hai:
   vd `(glossary.md#shopping-cart)`, `(data-model.md#order)` (xem `flows.md`).
 
 Cách quét:
-- Grep mọi link `(<đường-dẫn>.md#<anchor>)` và `(<đường-dẫn>.html#<anchor>)` trong `docs/`.
+- Grep mọi link `(<đường-dẫn>.md#<anchor>)` và `(<đường-dẫn>.html#<anchor>)` trong `<docs_dir>`.
 - **Base resolve = thư mục chứa file có link** (không phải gốc `docs/`). Quy tắc này đúng cho
   cả hai style: doc dẫn xuất ở gốc → `_sources/glossary.md` ra `docs/_sources/glossary.md`;
   `flows.md` trong `_sources/` → `glossary.md` ra `docs/_sources/glossary.md`.
@@ -36,8 +36,8 @@ Một định nghĩa bị lặp ở doc dẫn xuất.
 - Báo: "nên thay bằng link tới `_sources/...#anchor`".
 
 ### 4. .bru lệch api.html
-- Lập danh sách endpoint từ `api.html` (mỗi `<section data-method data-path>`).
-- Lập danh sách file `.bru` trong `api/bruno/`.
+- Lập danh sách endpoint từ `<dirs.api>/api.html` (mỗi `<section data-method data-path>`).
+- Lập danh sách file `.bru` trong `<dirs.bruno>`.
 - Báo: endpoint có trong html nhưng thiếu .bru; .bru thừa không có trong html;
   method/path/body khác nhau.
 
