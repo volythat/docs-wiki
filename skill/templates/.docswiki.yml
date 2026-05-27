@@ -1,0 +1,21 @@
+# Cấu hình docs-wiki cho dự án này. Skill đọc file này trước mọi lệnh.
+# Chỉ cần ghi khóa muốn đổi; khóa thiếu sẽ dùng mặc định (xem references/config.md).
+
+docs_dir: docs              # thư mục docs, tương đối từ folder tổng (cwd)
+
+dirs:                       # tên thư mục con, tương đối từ docs_dir
+  api: api
+  sources: _sources
+  bruno: api/bruno
+
+lang:
+  anchor: en                # ngôn ngữ slug/anchor (định danh ổn định)
+  content: vi               # ngôn ngữ nội dung
+
+bruno:
+  base_url: http://localhost:3000
+  env: local                # sinh environments/<env>.bru
+
+project:
+  name: ""                  # tên dự án -> tiêu đề api.html + README
+  description: ""
