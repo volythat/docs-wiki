@@ -36,7 +36,7 @@ lệnh sau:
 | **"khởi tạo docs"** | Tạo khung thư mục `docs/` từ template + sinh `.docswiki.yml`. Không ghi đè file đã có. |
 | **"thêm/sửa thuật ngữ\|field\|endpoint\|flow X"** | Ghi định nghĩa vào nguồn (`_sources/` hoặc `api/api.html`), gợi ý chỗ nên link. |
 | **"thêm file docs [tên]"** | Tạo `docs/[tên].md` theo cấu trúc tài liệu dẫn xuất: tiêu đề, mô tả ngắn, các section với link tới `_sources/` (không chép định nghĩa). Nếu thực thể liên quan chưa có trong `_sources/`, hỏi có muốn thêm vào nguồn trước không. "Cập nhật mục lục" chạy sau sẽ tự nhận file mới. |
-| **"phân tích docs cũ từ [folder]"** | **Pha 1:** Đọc toàn bộ file trong `[folder]`, phân loại nội dung thành: định nghĩa → `_sources/`, tổng hợp/góc nhìn → file dẫn xuất, endpoint → `api.html`, không rõ → liệt kê riêng. Xuất báo cáo phân loại, hỏi xác nhận. **Pha 2:** Chỉ sau khi xác nhận mới tạo file — nguồn trước, dẫn xuất sau. Không tạo gì khi chưa được duyệt. |
+| **"phân tích docs cũ từ [folder]"** | `[folder]` chỉ được **đọc**, không bao giờ bị sửa. Yêu cầu `docs_dir` trong `.docswiki.yml` trỏ sang folder *khác* (ví dụ `docs-v2`); dừng cảnh báo nếu trùng nhau. **Pha 1:** Đọc toàn bộ file trong `[folder]`, phân loại: định nghĩa → `_sources/`, tổng hợp/góc nhìn → file dẫn xuất, endpoint → `api.html`, không rõ → liệt kê riêng. Xuất báo cáo, hỏi xác nhận. **Pha 2:** Chỉ sau khi xác nhận mới tạo file vào `<docs_dir>` — nguồn trước, dẫn xuất sau. |
 | **"sinh bruno"** | Đọc `api/api.html`, sinh/cập nhật collection Bruno trong `api/bruno/`. |
 | **"kiểm tra nhất quán"** | Quét toàn bộ `docs/`, báo cáo 5 loại lệch (link gãy, term mồ côi, định nghĩa trùng, `.bru` lệch, field không tồn tại). |
 | **"X dùng ở đâu"** | Liệt kê mọi file + dòng có link trỏ tới anchor của X. |
