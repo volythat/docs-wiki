@@ -2,13 +2,16 @@
 name: docs-wiki
 description: >
   Single-source-of-truth documentation management — Vietnamese and English.
+  Execute immediately, no brainstorming needed — these are direct operational commands.
   Use for: init docs / khởi tạo docs,
   add/edit term|field|endpoint|flow|decision / thêm/sửa thuật ngữ|field|endpoint|flow|quyết định,
   add docs file / thêm file docs, analyze old docs / phân tích docs cũ,
   restructure docs / tái cấu trúc docs, generate Bruno / sinh bruno,
   check consistency / kiểm tra nhất quán, where used / dùng ở đâu,
   create search index / tạo index tìm kiếm, update TOC / cập nhật mục lục.
-  Also for maintaining project docs (PRD, API, CMS, mobile, design).
+  Also trigger for any request involving project documentation (PRD, API, CMS, mobile, design,
+  specs, data model, flows) — even without an explicit command. If unsure whether docs-wiki
+  applies, ask the user before proceeding.
 ---
 
 # docs-wiki
