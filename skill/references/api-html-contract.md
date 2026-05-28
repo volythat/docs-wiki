@@ -1,16 +1,16 @@
-# Hợp đồng cấu trúc api.html ↔ sinh Bruno
+# api.html ↔ Bruno Generation Contract
 
-`<dirs.api>/api.html` là GỐC của API. Skill đọc nó để sinh `<dirs.bruno>/`. Vì vậy mỗi endpoint
-PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa người soạn và skill.
+`<dirs.api>/api.html` is the API source of truth. The skill reads it to generate `<dirs.bruno>/`.
+Every endpoint MUST follow the structure below — this is the contract between author and skill.
 
-## Cấu trúc một endpoint
+## Endpoint structure
 
 ```html
 <section class="endpoint" id="create-order"
          data-method="POST" data-path="/orders"
          data-auth="bearer" data-seq="1">
   <h3>Tạo đơn hàng</h3>
-  <p class="desc">Mô tả ngắn (tiếng Việt).</p>
+  <p class="desc">Short description (Vietnamese).</p>
 
   <div class="headers">
     <div class="header" data-key="Content-Type" data-value="application/json"></div>
@@ -30,27 +30,27 @@ PHẢI theo cấu trúc dưới đây — đây là hợp đồng giữa ngườ
 </section>
 ```
 
-**Thuộc tính bắt buộc trên `<section>`:** `id` (slug theo `lang.anchor`), `data-method`, `data-path`.
-**Tuỳ chọn:** `data-auth` (`none|bearer|basic`, mặc định `none`), `data-seq` (thứ tự trong Bruno).
-**`data-ref`** trên request-body: con trỏ LOGIC tới entity trong `<dirs.sources>/data-model.md`
-(dạng `data-model.md#<entity>`) để kiểm tra field — KHÔNG phải đường dẫn file tương đối từ
-`<dirs.api>/api.html`. Khi dò lệch, resolve `<entity>` trong `<dirs.sources>/data-model.md`.
+**Required attributes on `<section>`:** `id` (slug per `lang.anchor`), `data-method`, `data-path`.
+**Optional:** `data-auth` (`none|bearer|basic`, default `none`), `data-seq` (order in Bruno), `data-deprecated="true"` (marks endpoint as no longer in use — generated .bru gets a leading `# DEPRECATED` comment; consistency check warns if any derived doc still links to it).
+**`data-ref`** on request-body: LOGICAL pointer to an entity in `<dirs.sources>/data-model.md`
+(format `data-model.md#<entity>`) for field validation — NOT a relative file path from
+`<dirs.api>/api.html`. When checking drift, resolve `<entity>` inside `<dirs.sources>/data-model.md`.
 
-**Wrapper trình bày được phép.** Generator parse theo CLASS/THUỘC TÍNH (`section.endpoint`,
-`data-*`, `h3`, `div.headers > div.header`, `pre.request-body`, `pre.response`), KHÔNG theo vị
-trí trong DOM. Template ships có thể bọc nội dung trong `div.endpoint-doc` / `div.endpoint-code`,
-thêm `div.route`, `p.section-label`… để làm đẹp — miễn các phần tử/thuộc tính bắt buộc còn nguyên.
-`<h3>` có thể là nhãn phẳng (vd `<h3>Tạo đơn hàng</h3>`) vì method/path đã nằm ở `data-method`/
-`data-path`; `div.route` chỉ là trang trí, generator không đọc.
+**Presentation wrappers are allowed.** The generator parses by CLASS/ATTRIBUTE (`section.endpoint`,
+`data-*`, `h3`, `div.headers > div.header`, `pre.request-body`, `pre.response`), NOT by DOM position.
+Templates may wrap content in `div.endpoint-doc` / `div.endpoint-code`, add `div.route`,
+`p.section-label`… for styling — as long as the required elements/attributes are intact.
+`<h3>` may be a flat label (e.g. `<h3>Tạo đơn hàng</h3>`) since method/path are already in
+`data-method`/`data-path`; `div.route` is decorative and ignored by the generator.
 
-## Bố cục Bruno sinh ra (mặc định)
+## Generated Bruno layout (default)
 
 ```
 api/bruno/
   bruno.json
   environments/
     local.bru
-  <slug>.bru          ← mỗi endpoint một file, tên = id của section
+  <slug>.bru          ← one file per endpoint, name = section id
 ```
 
 `bruno.json`:
@@ -63,33 +63,34 @@ api/bruno/
 }
 ```
 
-`environments/<bruno.env>.bru` (tên file = `bruno.env`, mặc định `local`):
+`environments/<bruno.env>.bru` (filename = `bruno.env`, default `local`):
 ```
 vars {
   baseUrl: <bruno.base_url>
 }
 ```
-`<bruno.base_url>` lấy từ `.docswiki.yml` (mặc định `http://localhost:3000`); xem `config.md`.
-Thư mục Bruno sinh ra là `<dirs.bruno>` (mặc định `api/bruno`), không cố định.
+`<bruno.base_url>` comes from `.docswiki.yml` (default `http://localhost:3000`); see `config.md`.
+Bruno output directory is `<dirs.bruno>` (default `api/bruno`), not hardcoded.
 
-## Thuật toán map endpoint → .bru
+## Endpoint → .bru mapping algorithm
 
-Với mỗi `<section class="endpoint">`:
-1. Tên file = `<id>.bru`.
-2. Khối `meta`: `name` = nhãn mô tả trong `<h3>`, `type: http`, `seq` = `data-seq` (mặc định thứ tự xuất hiện).
-   - Nếu `<h3>` có trang trí method/path (vd `<span class="method">POST</span> /orders — Tạo đơn hàng`),
-     lấy phần nhãn sau dấu `—` (`Tạo đơn hàng`). Nếu không có dấu `—`, lấy toàn bộ text đã strip thẻ.
-3. Khối method (`get`/`post`/...) theo `data-method` (chữ thường):
+For each `<section class="endpoint">`:
+1. Filename = `<id>.bru`.
+2. If `data-deprecated="true"`: prepend `# DEPRECATED` as the very first line before all other blocks.
+3. `meta` block: `name` = label from `<h3>`, `type: http`, `seq` = `data-seq` (default: order of appearance).
+   - If `<h3>` contains method/path decoration (e.g. `<span class="method">POST</span> /orders — Tạo đơn hàng`),
+     take the label after the `—` separator (`Tạo đơn hàng`). If no `—`, take the full stripped text.
+4. Method block (`get`/`post`/…) from `data-method` (lowercase):
    - `url: {{baseUrl}}<data-path>`
-   - `body: json` nếu có `pre.request-body`, ngược lại `body: none`
+   - `body: json` if `pre.request-body` exists, else `body: none`
    - `auth: <data-auth>`
-4. Khối `headers`: từng `div.header` → `<data-key>: <data-value>`.
-   - Nếu `data-auth="bearer"`: thêm khối `auth:bearer { token: {{token}} }`.
-5. Khối `body:json`: copy nguyên text trong `pre.request-body > code`.
+5. `headers` block: each `div.header` → `<data-key>: <data-value>`.
+   - If `data-auth="bearer"`: also add `auth:bearer { token: {{token}} }` block.
+6. `body:json` block: copy raw text from `pre.request-body > code`.
 
-## Ví dụ hoàn chỉnh
+## Complete example
 
-Section ở trên sinh ra `api/bruno/create-order.bru`:
+The section above generates `api/bruno/create-order.bru`:
 
 ```
 meta {

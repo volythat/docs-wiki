@@ -8,8 +8,8 @@ A **single-source-of-truth documentation skill** for app projects. Every fact
 keeps docs consistent as the project evolves and enables automated consistency
 checks.
 
-> **No runtime.** This skill is a set of Markdown instructions for Claude.
-> "Installing" means copying the `skill/` folder into your AI tool's skills
+> **No runtime.** This skill is a set of Markdown instructions for your AI tool.
+> "Installing" means copying the `skill/` folder into the tool's skills
 > directory, then giving natural-language commands (see [Usage](#usage)).
 
 ## Install
@@ -24,24 +24,56 @@ Copies `skill/` → `~/.claude/skills/docs-wiki/`. Re-run whenever you update
 the skill source to sync changes. After installing, open Claude Code in your
 project folder and issue commands directly — the skill activates automatically.
 
-> Multi-tool support (Codex, Antigravity, Cursor) is planned (Plan 2), not yet
-> available.
+### Codex
+
+```bash
+./install/install-codex.sh
+```
+
+Copies `skill/` → `~/.codex/skills/docs-wiki/` (respects `$CODEX_HOME` if set).
+After installing, open Codex in your project folder and issue commands directly.
+
+### Gemini CLI
+
+```bash
+./install/install-gemini.sh
+```
+
+Copies `skill/` → `~/.gemini/config/skills/docs-wiki/`. After installing,
+open Gemini CLI in your project folder and issue commands directly.
+
+### Cursor
+
+Cursor rules are **project-local** — run this script once per project:
+
+```bash
+./install/install-cursor.sh /path/to/your/project
+# or from inside the project:
+/path/to/docs-wiki/install/install-cursor.sh .
+```
+
+Creates `.cursor/rules/docs-wiki.mdc` + `.cursor/rules/docs-wiki/references/`
+and `.cursor/rules/docs-wiki/templates/` in the target project. The rule
+activates automatically when you issue docs-wiki commands in Cursor.
 
 ## Usage
 
-After installing, talk to Claude in natural language. The skill recognises these
-commands:
+After installing, talk to your AI in natural language. The skill recognises
+these commands:
 
 | You say | What happens |
 |---|---|
 | **"init docs"** | Scaffolds the `docs/` folder from templates and generates `.docswiki.yml`. Never overwrites existing files. |
-| **"add/update term\|field\|endpoint\|flow X"** | Writes the definition into the source (`_sources/` or `api/api.html`), then suggests where to link. |
-| **"add docs file [name]"** | Creates `docs/[name].md` as a derived doc: title, short description, sections with links to `_sources/` (no copied definitions). If related entities are missing from `_sources/`, asks whether to add them first. The next "update table of contents" picks it up automatically. |
-| **"analyse old docs from [folder]"** | `[folder]` is **read-only** — never modified. Requires `docs_dir` in `.docswiki.yml` to point to a *different* folder (e.g. `docs-v2`); stops with a warning if they are the same. **Phase 1:** Reads all files in `[folder]` and categorises content into: definitions → `_sources/`, summaries/views → derived doc files, endpoints → `api.html`, unclear → listed separately. Outputs a report and asks for confirmation. **Phase 2:** Only after confirmation, creates files in `<docs_dir>` — sources first, derived docs second. |
+| **"add/edit term\|field\|endpoint\|flow X"** | Writes the definition into the source (`_sources/` or `api/api.html`), then suggests where to link. Updates `INDEX.md` if present. |
+| **"add/edit decision X"** | Writes an Architecture Decision Record (ADR) to `_sources/decisions.md` in Context / Decision / Consequences format. Append-only — old decisions are never deleted. |
+| **"add docs file [name]"** | Asks for doc type (Reference / How-to / Explanation), then creates `docs/[name].md` with links to `_sources/` — no copied definitions. The next "update TOC" picks it up automatically. |
+| **"analyze old docs from [folder]"** | `[folder]` is **read-only** — never modified. Requires `docs_dir` in `.docswiki.yml` to point to a *different* folder; stops with a warning if they match. **Phase 1:** classifies content into definitions → `_sources/`, summaries → derived docs, endpoints → `api.html`, unclear → listed separately. Outputs report and asks for confirmation. **Phase 2:** creates files only after confirmation. |
+| **"restructure docs"** | Audits the current `docs/` folder, moves inline definitions to `_sources/`, groups files into domain subfolders, and replaces copied content with links. Step-by-step with confirmation. |
 | **"generate bruno"** | Reads `api/api.html` and generates/updates a Bruno collection under `api/bruno/`. |
-| **"check consistency"** | Scans all of `docs/` and reports 5 drift types (broken links, orphan terms, duplicate definitions, `.bru` drift, missing fields). |
+| **"check consistency"** | Scans all of `docs/` and reports 6 drift types: broken links, orphan terms, duplicate definitions, `.bru` drift, orphan anchors, and missing fields. |
 | **"where is X used"** | Lists every file + line that links to X's anchor. |
-| **"update table of contents"** | Regenerates the docs `README.md` and `api.html` TOC by scanning the directory (no hardcoded manifest). |
+| **"create search index"** | Scans all anchors in `_sources/` and generates `_sources/INDEX.md` — a compact (~100-200 token) index for fast AI navigation. |
+| **"update TOC"** | Regenerates the docs `README.md` by scanning the directory (no hardcoded manifest). |
 
 ### Core rules
 
@@ -71,7 +103,7 @@ project:
 
 **2. Scaffold the structure**
 
-Tell Claude: `"khởi tạo docs"` (or `"init docs"`). The skill creates `docs-v2/`
+Tell your AI: `"init docs"`. The skill creates `docs-v2/`
 with the full template structure and will not overwrite anything that already
 exists.
 
@@ -108,7 +140,7 @@ Copy your existing endpoints into `api/api.html` following the contract in
 
 **7. Update the table of contents**
 
-> `"update table of contents"` — scans `docs-v2/` and regenerates `README.md`.
+> `"update TOC"` — scans `docs-v2/` and regenerates `README.md`.
 
 **8. Switch over**
 
@@ -149,10 +181,15 @@ Full schema and resolve rules: [`skill/references/config.md`](skill/references/c
 .
 ├── skill/                  # Skill source (what gets installed)
 │   ├── SKILL.md            # Entry point: commands + implicit rules
+│   ├── agents/             # Codex UI metadata (openai.yaml)
+│   ├── cursor/             # Cursor adapter (docs-wiki.mdc)
 │   ├── references/         # Details: config, link conventions, api.html contract, consistency checks
 │   └── templates/          # docs/ scaffolding + sample .docswiki.yml
 ├── install/
-│   └── install-claude.sh   # Copies skill/ → ~/.claude/skills/docs-wiki/
+│   ├── install-claude.sh   # Copies skill/ → ~/.claude/skills/docs-wiki/
+│   ├── install-codex.sh    # Copies skill/ → ~/.codex/skills/docs-wiki/
+│   ├── install-gemini.sh   # Copies skill/ → ~/.gemini/config/skills/docs-wiki/
+│   └── install-cursor.sh   # Copies cursor rule + references → <project>/.cursor/rules/
 └── README.md               # This file
 ```
 

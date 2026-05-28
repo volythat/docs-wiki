@@ -13,6 +13,7 @@
 - [Thuật ngữ](_sources/glossary.md)
 - [Mô hình dữ liệu](_sources/data-model.md)
 - [Luồng nghiệp vụ](_sources/flows.md)
+- [Quyết định kiến trúc](_sources/decisions.md)
 
 ## Quy ước
 Xem [_meta/conventions.md](_meta/conventions.md).

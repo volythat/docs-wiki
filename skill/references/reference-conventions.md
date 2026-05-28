@@ -1,26 +1,27 @@
-# Quy ước tham chiếu (single source of truth)
+# Reference Conventions (single source of truth)
 
-## Nguyên tắc cốt lõi
-- **Anchor = slug theo `lang.anchor`** (mặc định `en`, định danh ổn định).
-  **Nội dung hiển thị theo `lang.content`** (mặc định `vi`).
-  Đổi nhãn hiển thị không được làm gãy anchor. (`lang.*` lấy từ `.docswiki.yml`, xem `config.md`.)
-- Định nghĩa nằm ở `<dirs.sources>/` (hoặc `<dirs.api>/api.html` cho endpoint). Nơi khác CHỈ link.
+## Core principles
+- **Anchor = slug per `lang.anchor`** (default `en`, stable identifier).
+  **Display content per `lang.content`** (default `vi`).
+  Renaming display label must NOT break the anchor. (`lang.*` from `.docswiki.yml`, see `config.md`.)
+- Definitions live in `<dirs.sources>/` (or `<dirs.api>/api.html` for endpoints). Everywhere else only LINKS.
 
-## Cách tạo anchor
+## Creating anchors
 
-| Loại | Nơi định nghĩa | Anchor | Ví dụ link |
+| Type | Defined in | Anchor | Example link |
 |---|---|---|---|
-| Thuật ngữ | `_sources/glossary.md` | heading `### <lang.anchor-slug>` | `[Giỏ hàng](_sources/glossary.md#shopping-cart)` |
+| Term | `_sources/glossary.md` | heading `### <lang.anchor-slug>` | `[Giỏ hàng](_sources/glossary.md#shopping-cart)` |
 | Entity | `_sources/data-model.md` | heading `### <lang.anchor-slug>` | `[Người dùng](_sources/data-model.md#user)` |
-| Field | `_sources/data-model.md` | `<a id="<entity>-<field>"></a>` trong bảng | `[email](_sources/data-model.md#user-email)` |
+| Field | `_sources/data-model.md` | `<a id="<entity>-<field>"></a>` inside table | `[email](_sources/data-model.md#user-email)` |
 | Flow | `_sources/flows.md` | heading `### <lang.anchor-slug>` | `[Thanh toán](_sources/flows.md#checkout)` |
-| Endpoint | `api/api.html` | `id="<lang.anchor-slug>"` trên `<section>` | `[Tạo đơn hàng](api/api.html#create-order)` |
+| Endpoint | `api/api.html` | `id="<lang.anchor-slug>"` on `<section>` | `[Tạo đơn hàng](api/api.html#create-order)` |
+| Decision | `_sources/decisions.md` | heading `### <lang.anchor-slug>` | `[Dùng UUID](_sources/decisions.md#use-uuid-for-id)` |
 
-## Quy tắc đặt slug
-- Chữ thường, nối bằng `-`, chỉ ký tự `[a-z0-9-]`.
-- Mô tả ngữ nghĩa, không phải bản dịch máy móc (vd `checkout`, không `thanh-toan`).
-- Slug đặt một lần, không đổi. Khi cần đổi tên: đổi NHÃN hiển thị, giữ nguyên slug.
+## Slug rules
+- Lowercase, hyphen-separated, only `[a-z0-9-]`.
+- Semantic description, not literal translation (e.g. `checkout`, not `thanh-toan`).
+- Set once, never changed. To rename: change the DISPLAY label, keep the slug.
 
-## Khi nào link, khi nào chép
-- Doc dẫn xuất (overview/cms/mobile/design): luôn LINK tới định nghĩa, không chép.
-- Được phép viết câu mô tả ngữ cảnh quanh link, miễn không lặp lại định nghĩa gốc.
+## When to link vs. copy
+- Derived docs (overview/cms/mobile/design): always LINK to the definition, never copy.
+- May write contextual sentences around the link, as long as they don't repeat the definition itself.

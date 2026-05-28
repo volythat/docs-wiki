@@ -5,8 +5,11 @@ không có runtime, test suite, hay build step.
 
 ## Cấu trúc
 
-- `skill/` — nguồn skill: SKILL.md (điểm vào), references/, templates/
+- `skill/` — nguồn skill: SKILL.md (điểm vào), references/, templates/, agents/ (Codex UI), cursor/ (Cursor adapter)
 - `install/install-claude.sh` — đồng bộ `skill/` → `~/.claude/skills/docs-wiki/`
+- `install/install-codex.sh` — đồng bộ `skill/` → `~/.codex/skills/docs-wiki/`
+- `install/install-gemini.sh` — đồng bộ `skill/` → `~/.gemini/config/skills/docs-wiki/`
+- `install/install-cursor.sh <project>` — cài Cursor rule vào `<project>/.cursor/rules/`
 - `docs/` — **KHÔNG commit**, luôn untracked (spec/plan tạm thời)
 - `README.md` / `README.vi.md` — tài liệu cho người dùng (EN + VI)
 

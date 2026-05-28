@@ -7,7 +7,7 @@ field, flow, endpoint) định nghĩa đúng **một chỗ** trong `_sources/` (
 `api/api.html`); mọi nơi khác chỉ **link** tới. Nhờ đó tài liệu không bị lệch
 khi sửa, và có thể kiểm tra nhất quán tự động.
 
-> **Không có runtime.** Skill này là một tập chỉ dẫn Markdown cho Claude.
+> **Không có runtime.** Skill này là một tập chỉ dẫn Markdown cho công cụ AI.
 > "Cài đặt" nghĩa là copy thư mục `skill/` vào thư mục skills của công cụ, rồi
 > ra lệnh bằng ngôn ngữ tự nhiên (xem [Cách dùng](#cách-dùng)).
 
@@ -23,24 +23,56 @@ Script copy `skill/` → `~/.claude/skills/docs-wiki/`. Chạy lại mỗi khi s
 nguồn skill để đồng bộ. Sau khi cài, mở Claude Code ở thư mục dự án và ra lệnh
 trực tiếp — skill tự kích hoạt theo `description`.
 
-> Hỗ trợ đa công cụ (Codex, Antigravity, Cursor) đang trong kế hoạch (Plan 2),
-> chưa khả dụng.
+### Codex
+
+```bash
+./install/install-codex.sh
+```
+
+Copy `skill/` → `~/.codex/skills/docs-wiki/` (tôn trọng `$CODEX_HOME` nếu đặt).
+Sau khi cài, mở Codex ở thư mục dự án và ra lệnh trực tiếp.
+
+### Gemini CLI
+
+```bash
+./install/install-gemini.sh
+```
+
+Copy `skill/` → `~/.gemini/config/skills/docs-wiki/`. Sau khi cài, mở Gemini
+CLI ở thư mục dự án và ra lệnh trực tiếp.
+
+### Cursor
+
+Cursor rules là **project-local** — chạy script này một lần cho mỗi dự án:
+
+```bash
+./install/install-cursor.sh /đường/dẫn/dự-án
+# hoặc từ bên trong dự án:
+/đường/dẫn/docs-wiki/install/install-cursor.sh .
+```
+
+Tạo `.cursor/rules/docs-wiki.mdc` + `.cursor/rules/docs-wiki/references/`
+và `.cursor/rules/docs-wiki/templates/` trong dự án. Rule tự kích hoạt khi bạn
+ra lệnh docs-wiki trong Cursor.
 
 ## Cách dùng
 
-Sau khi cài, nói chuyện với Claude bằng ngôn ngữ tự nhiên. Skill nhận diện các
-lệnh sau:
+Sau khi cài, nói chuyện với AI bằng ngôn ngữ tự nhiên. Skill nhận diện các lệnh
+sau:
 
 | Bạn nói | Skill làm gì |
 |---|---|
 | **"khởi tạo docs"** | Tạo khung thư mục `docs/` từ template + sinh `.docswiki.yml`. Không ghi đè file đã có. |
-| **"thêm/sửa thuật ngữ\|field\|endpoint\|flow X"** | Ghi định nghĩa vào nguồn (`_sources/` hoặc `api/api.html`), gợi ý chỗ nên link. |
-| **"thêm file docs [tên]"** | Tạo `docs/[tên].md` theo cấu trúc tài liệu dẫn xuất: tiêu đề, mô tả ngắn, các section với link tới `_sources/` (không chép định nghĩa). Nếu thực thể liên quan chưa có trong `_sources/`, hỏi có muốn thêm vào nguồn trước không. "Cập nhật mục lục" chạy sau sẽ tự nhận file mới. |
-| **"phân tích docs cũ từ [folder]"** | `[folder]` chỉ được **đọc**, không bao giờ bị sửa. Yêu cầu `docs_dir` trong `.docswiki.yml` trỏ sang folder *khác* (ví dụ `docs-v2`); dừng cảnh báo nếu trùng nhau. **Pha 1:** Đọc toàn bộ file trong `[folder]`, phân loại: định nghĩa → `_sources/`, tổng hợp/góc nhìn → file dẫn xuất, endpoint → `api.html`, không rõ → liệt kê riêng. Xuất báo cáo, hỏi xác nhận. **Pha 2:** Chỉ sau khi xác nhận mới tạo file vào `<docs_dir>` — nguồn trước, dẫn xuất sau. |
+| **"thêm/sửa thuật ngữ\|field\|endpoint\|flow X"** | Ghi định nghĩa vào nguồn (`_sources/` hoặc `api/api.html`), gợi ý chỗ nên link. Cập nhật `INDEX.md` nếu có. |
+| **"thêm/sửa quyết định X"** | Ghi Architecture Decision Record (ADR) vào `_sources/decisions.md` theo format Context / Decision / Consequences. Append-only — quyết định cũ không bao giờ bị xóa. |
+| **"thêm file docs [tên]"** | Hỏi loại tài liệu (Reference / How-to / Explanation), rồi tạo `docs/[tên].md` với link tới `_sources/` — không chép định nghĩa. "Cập nhật mục lục" chạy sau sẽ tự nhận file mới. |
+| **"phân tích docs cũ từ [folder]"** | `[folder]` chỉ được **đọc**, không bao giờ bị sửa. Yêu cầu `docs_dir` trong `.docswiki.yml` trỏ sang folder *khác*; dừng cảnh báo nếu trùng nhau. **Pha 1:** phân loại: định nghĩa → `_sources/`, tổng hợp → file dẫn xuất, endpoint → `api.html`, không rõ → liệt kê riêng. Xuất báo cáo, hỏi xác nhận. **Pha 2:** tạo file chỉ sau khi xác nhận. |
+| **"tái cấu trúc docs"** | Kiểm tra toàn bộ `docs/`, chuyển định nghĩa inline vào `_sources/`, nhóm file vào subfolder theo domain, thay nội dung chép bằng link. Từng bước có xác nhận. |
 | **"sinh bruno"** | Đọc `api/api.html`, sinh/cập nhật collection Bruno trong `api/bruno/`. |
-| **"kiểm tra nhất quán"** | Quét toàn bộ `docs/`, báo cáo 5 loại lệch (link gãy, term mồ côi, định nghĩa trùng, `.bru` lệch, field không tồn tại). |
+| **"kiểm tra nhất quán"** | Quét toàn bộ `docs/`, báo cáo 6 loại lệch: link gãy, term mồ côi, định nghĩa trùng, `.bru` lệch, anchor mồ côi, field không tồn tại. |
 | **"X dùng ở đâu"** | Liệt kê mọi file + dòng có link trỏ tới anchor của X. |
-| **"cập nhật mục lục"** | Sinh lại `README.md` của docs + mục lục trong `api.html` bằng cách quét thư mục (không theo danh sách cứng). |
+| **"tạo index tìm kiếm"** | Quét toàn bộ anchor trong `_sources/`, sinh `_sources/INDEX.md` — index gọn (~100-200 token) để AI tìm kiếm nhanh. |
+| **"cập nhật mục lục"** | Sinh lại `README.md` của docs bằng cách quét thư mục (không theo danh sách cứng). |
 
 ### Quy tắc cốt lõi
 
@@ -69,7 +101,7 @@ project:
 
 **2. Khởi tạo cấu trúc**
 
-Nói với Claude: `"khởi tạo docs"`. Skill tạo `docs-v2/` với toàn bộ cấu trúc
+Nói với AI: `"khởi tạo docs"`. Skill tạo `docs-v2/` với toàn bộ cấu trúc
 template, không ghi đè gì đã tồn tại.
 
 **3. Chuyển định nghĩa vào `_sources/` trước**
@@ -145,10 +177,15 @@ Schema đầy đủ + quy tắc resolve: [`skill/references/config.md`](skill/re
 .
 ├── skill/                  # NGUỒN của skill (cài cái này)
 │   ├── SKILL.md            # điểm vào: lệnh + quy tắc ngầm
+│   ├── agents/             # Codex UI metadata (openai.yaml)
+│   ├── cursor/             # Cursor adapter (docs-wiki.mdc)
 │   ├── references/         # chi tiết: config, quy ước link, hợp đồng api.html, check nhất quán
 │   └── templates/          # khung docs/ + .docswiki.yml mẫu
 ├── install/
-│   └── install-claude.sh   # copy skill/ → ~/.claire/skills/docs-wiki/
+│   ├── install-claude.sh   # copy skill/ → ~/.claude/skills/docs-wiki/
+│   ├── install-codex.sh    # copy skill/ → ~/.codex/skills/docs-wiki/
+│   ├── install-gemini.sh   # copy skill/ → ~/.gemini/config/skills/docs-wiki/
+│   └── install-cursor.sh   # copy cursor rule + references → <project>/.cursor/rules/
 └── README.md               # README tiếng Anh
 ```
 

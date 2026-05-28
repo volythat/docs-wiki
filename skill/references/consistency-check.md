@@ -1,70 +1,88 @@
-# Kiểm tra nhất quán (chạy KHI người dùng yêu cầu)
+# Consistency Check (run ONLY when requested)
 
-Quét toàn bộ `<docs_dir>` và báo cáo các loại lệch. KHÔNG tự chạy sau mỗi lần sửa.
+Scan all of `<docs_dir>` and report discrepancy types. Do NOT auto-run after every edit.
 
-> Đường dẫn dưới đây dùng tên mặc định (gốc `docs/`, `_sources`, `api/api.html`, `api/bruno`). Resolve
-> theo `docs_dir`/`dirs.*` trong `.docswiki.yml` nếu dự án đặt tên khác (xem `config.md`).
+> Paths below use default names (root `docs/`, `_sources`, `api/api.html`, `api/bruno`). Resolve
+> from `docs_dir`/`dirs.*` in `.docswiki.yml` if the project uses different names (see `config.md`).
 
-## 5 loại lệch
+## 6 discrepancy types
 
-### 1. Link gãy
-Mọi link markdown `(<path>#<anchor>)` trỏ tới một file trong docs PHẢI có anchor tồn tại.
-Có HAI style đường dẫn cùng hợp lệ — phải quét cả hai:
-- **Doc dẫn xuất** (overview/cms/mobile/design ở gốc `docs/`): trỏ kèm tiền tố thư mục,
-  vd `(_sources/glossary.md#shopping-cart)`, `(api/api.html#create-order)`.
-- **Link nội bộ giữa các file `_sources/`**: trỏ kiểu sibling, KHÔNG có tiền tố `_sources/`,
-  vd `(glossary.md#shopping-cart)`, `(data-model.md#order)` (xem `flows.md`).
+### 1. Broken links
+Every markdown link `(<path>#<anchor>)` pointing to a file inside docs MUST have an existing anchor.
+Two valid path styles — scan both:
+- **Derived docs** (overview/cms/mobile/design at root of `docs/`): include directory prefix,
+  e.g. `(_sources/glossary.md#shopping-cart)`, `(api/api.html#create-order)`.
+- **Internal links between `_sources/` files**: sibling-style, NO `_sources/` prefix,
+  e.g. `(glossary.md#shopping-cart)`, `(data-model.md#order)` (as seen in `flows.md`).
 
-Cách quét:
-- Grep mọi link `(<đường-dẫn>.md#<anchor>)` và `(<đường-dẫn>.html#<anchor>)` trong `<docs_dir>`.
-- **Base resolve = thư mục chứa file có link** (không phải gốc `docs/`). Quy tắc này đúng cho
-  cả hai style: doc dẫn xuất ở gốc → `_sources/glossary.md` ra `docs/_sources/glossary.md`;
-  `flows.md` trong `_sources/` → `glossary.md` ra `docs/_sources/glossary.md`.
-- Với mỗi đích: kiểm tra `### <anchor>`, `<a id="<anchor>">`, hoặc `id="<anchor>"` có tồn tại
-  trong file đã resolve không. Báo link không tìm thấy đích.
-- **Bỏ qua** link nằm trong dòng hướng dẫn (blockquote bắt đầu bằng `>`): đó là ví dụ minh hoạ
-  cách viết link, không phải tham chiếu thật (vd dòng đầu mỗi file `_sources/`).
+How to scan:
+- Grep all links `(<path>.md#<anchor>)` and `(<path>.html#<anchor>)` in `<docs_dir>`.
+- **Base resolve = directory of the file containing the link** (not root `docs/`). This rule applies
+  to both styles: derived doc at root → `_sources/glossary.md` resolves to `docs/_sources/glossary.md`;
+  `flows.md` inside `_sources/` → `glossary.md` resolves to `docs/_sources/glossary.md`.
+- For each target: check whether `### <anchor>`, `<a id="<anchor>">`, or `id="<anchor>"` exists
+  in the resolved file. Report links where the target is not found.
+- **Skip** links inside instruction lines (blockquotes starting with `>`): those are illustrative
+  examples of how to write links, not real references (e.g. the header line in each `_sources/` file).
 
-### 2. Term/field mồ côi
-Khái niệm được nhắc trong doc dẫn xuất nhưng chưa định nghĩa trong `_sources`.
-- Heuristic: tìm các cụm in đậm/term lặp lại trong overview/cms/mobile/design mà KHÔNG có
-  link tới `_sources`. Liệt kê để người dùng xác nhận có cần định nghĩa không.
+### 2. Orphan terms/fields
+Concepts mentioned in derived docs but not yet defined in `_sources`.
+- Heuristic: find bold/repeated terms in overview/cms/mobile/design that have NO link to `_sources`.
+  List them for the user to confirm whether a definition is needed.
 
-### 3. Định nghĩa trùng (chép thay vì link)
-Một định nghĩa bị lặp ở doc dẫn xuất.
-- Tìm các đoạn mô tả entity/field/flow trong doc dẫn xuất trùng nội dung với `_sources`.
-- Báo: "nên thay bằng link tới `_sources/...#anchor`".
+### 3. Duplicate definitions (copied instead of linked)
+A definition that is repeated inline in a derived doc.
+- Find entity/field/flow descriptions in derived docs that duplicate content in `_sources`.
+- Report: "should be replaced with a link to `_sources/...#anchor`".
 
-### 4. .bru lệch api.html
-- Lập danh sách endpoint từ `<dirs.api>/api.html` (mỗi `<section data-method data-path>`).
-- Lập danh sách file `.bru` trong `<dirs.bruno>`.
-- Báo: endpoint có trong html nhưng thiếu .bru; .bru thừa không có trong html;
-  method/path/body khác nhau.
+### 4. .bru vs. api.html drift
+- List endpoints from `<dirs.api>/api.html` (each `<section data-method data-path>`).
+- List `.bru` files in `<dirs.bruno>`.
+- Report: endpoints in html but missing a .bru; surplus .bru with no html counterpart;
+  method/path/body mismatches.
+- Report: endpoints with `data-deprecated="true"` in api.html that are still linked from derived docs —
+  use the same link grep from type 1 to find `(api.html#<slug>)` in files outside `_sources/`;
+  warn "deprecated endpoint is still being referenced".
 
-### 5. Field không tồn tại / lệch type
-- Với mỗi `data-ref="data-model.md#<entity>"` trong api.html: kiểm tra các field trong
-  request-body có mặt trong entity đó của `data-model.md` không.
-- Báo field dùng trong API mà data-model không có.
+### 5. Orphan anchors (defined but not referenced)
+Anchors defined in `<dirs.sources>/` but not linked from any derived doc.
+- For each `### <slug>` and `<a id="...">` in `<dirs.sources>/` files: check whether at least
+  one link `(<path>#<slug>)` exists in files **outside** `_sources/`.
+- **Skip** internal links between `_sources/` files (sibling links like `(glossary.md#term)`):
+  an anchor needs at least one link from a derived doc.
+- **Skip** `INDEX.md` — this file links to every anchor by design and does not count as "actually used".
+- Report: "anchor `#<slug>` in `<file>` has no references from any derived doc".
+- **Note:** newly created anchors that are indexed in `INDEX.md` but not yet linked from any derived doc
+  will appear here — this is expected behavior for new terms, not an error. Only worth investigating
+  if the anchor has existed a long time with no incoming links.
 
-## Mẫu báo cáo
+### 6. Non-existent fields / type mismatch
+- For each `data-ref="data-model.md#<entity>"` in api.html: check whether fields in the
+  request-body exist in that entity in `data-model.md`.
+- Report fields used in the API that data-model does not define.
+
+## Report template
 
 ```
-## Kiểm tra nhất quán — <ngày>
+## Consistency Check — <date>
 
-### Link gãy (n)
-- cms.md:42 → _sources/glossary.md#shopping-cart  (anchor không tồn tại)
+### Broken links (n)
+- cms.md:42 → _sources/glossary.md#shopping-cart  (anchor not found)
 
-### Term mồ côi (n)
-- mobile.md: "điểm thưởng" lặp 3 lần, chưa có trong glossary
+### Orphan terms (n)
+- mobile.md: "điểm thưởng" appears 3 times, not in glossary
 
-### Định nghĩa trùng (n)
-- overview.md:15-20 chép định nghĩa Order → nên link _sources/data-model.md#order
+### Duplicate definitions (n)
+- overview.md:15-20 copies Order definition → should link _sources/data-model.md#order
 
-### .bru lệch (n)
-- api.html có endpoint #refund-order nhưng thiếu api/bruno/refund-order.bru
+### .bru drift (n)
+- api.html has endpoint #refund-order but api/bruno/refund-order.bru is missing
 
-### Field không tồn tại (n)
-- api.html #create-order dùng field "coupon" không có trong data-model.md#order
+### Orphan anchors (n)
+- _sources/glossary.md#loyalty-points has no references from any derived doc
 
-Tổng: n vấn đề.
+### Non-existent fields (n)
+- api.html #create-order uses field "coupon" not found in data-model.md#order
+
+Total: n issues.
 ```
