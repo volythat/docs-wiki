@@ -1,17 +1,14 @@
 ---
 name: docs-wiki
 description: >
-  Use when user says any of these phrases (invoke immediately, skip brainstorming) —
-  Vietnamese: "khởi tạo docs", "thêm thuật ngữ", "thêm field", "thêm endpoint", "thêm flow",
-  "sửa thuật ngữ", "sửa field", "thêm quyết định", "sửa quyết định", "thêm file docs",
-  "phân tích docs cũ", "tái cấu trúc docs", "sinh bruno", "kiểm tra nhất quán",
-  "dùng ở đâu", "cập nhật mục lục", "tạo index tìm kiếm" —
-  English: "init docs", "initialize docs", "add term", "add field", "add endpoint", "add flow",
-  "edit term", "edit field", "add decision", "edit decision", "add docs file", "new docs file",
-  "analyze old docs", "restructure docs", "generate bruno", "check consistency", "used where",
-  "update TOC", "create search index".
-  Also use when creating or maintaining application documentation (PRD, API, CMS, mobile, design)
-  that must stay consistent.
+  Single-source-of-truth documentation management — Vietnamese and English.
+  Use for: init docs / khởi tạo docs,
+  add/edit term|field|endpoint|flow|decision / thêm/sửa thuật ngữ|field|endpoint|flow|quyết định,
+  add docs file / thêm file docs, analyze old docs / phân tích docs cũ,
+  restructure docs / tái cấu trúc docs, generate Bruno / sinh bruno,
+  check consistency / kiểm tra nhất quán, where used / dùng ở đâu,
+  create search index / tạo index tìm kiếm, update TOC / cập nhật mục lục.
+  Also for maintaining project docs (PRD, API, CMS, mobile, design).
 ---
 
 # docs-wiki

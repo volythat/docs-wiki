@@ -27,8 +27,12 @@ How to scan:
 
 ### 2. Orphan terms/fields
 Concepts mentioned in derived docs but not yet defined in `_sources`.
-- Heuristic: find bold/repeated terms in overview/cms/mobile/design that have NO link to `_sources`.
-  List them for the user to confirm whether a definition is needed.
+- Scan all derived docs (files outside `_sources/`). For each file, collect:
+  (a) bold phrases (`**...**` or `__...__`) that have no adjacent `_sources/` link on the same or next line;
+  (b) terms repeated 3+ times across 2+ derived docs with no link to `_sources/` anywhere.
+- For each candidate: check whether a matching anchor exists in `_sources/` (fuzzy match on slug).
+- Report: term, file(s) + occurrence count, and whether a corresponding `_sources/` anchor was found.
+  List as candidates — ask user to confirm whether a definition is needed before acting.
 
 ### 3. Duplicate definitions (copied instead of linked)
 A definition that is repeated inline in a derived doc.
