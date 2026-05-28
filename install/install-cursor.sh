@@ -24,4 +24,18 @@ cp "$SRC_ROOT/skill/cursor/docs-wiki.mdc" "$RULES_DIR/docs-wiki.mdc"
 cp "$SRC_ROOT/skill/references/"*.md "$RULES_DIR/docs-wiki/references/"
 rsync -a "$SRC_ROOT/skill/templates/" "$RULES_DIR/docs-wiki/templates/"
 
+# Create small always-on trigger rule (idempotent)
+TRIGGER_FILE="$RULES_DIR/docs-wiki-trigger.mdc"
+if [ ! -f "$TRIGGER_FILE" ]; then
+  cat > "$TRIGGER_FILE" << 'EOF'
+---
+description: docs-wiki passive trigger
+globs:
+alwaysApply: true
+---
+When the user mentions "docs", "tài liệu", or documentation in any context, invoke the docs-wiki skill before responding.
+EOF
+  echo "Created docs-wiki-trigger.mdc in $RULES_DIR"
+fi
+
 echo "Installed docs-wiki Cursor rules to $RULES_DIR"

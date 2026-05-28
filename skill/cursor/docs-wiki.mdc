@@ -1,16 +1,12 @@
 ---
 description: >
-  Single-source-of-truth documentation management — Vietnamese and English.
-  Execute immediately, no brainstorming needed — these are direct operational commands.
-  Use for: init docs / khởi tạo docs,
-  add/edit term|field|endpoint|flow|decision / thêm/sửa thuật ngữ|field|endpoint|flow|quyết định,
-  add docs file / thêm file docs, analyze old docs / phân tích docs cũ,
-  restructure docs / tái cấu trúc docs, generate Bruno / sinh bruno,
-  check consistency / kiểm tra nhất quán, where used / dùng ở đâu,
-  create search index / tạo index tìm kiếm, update TOC / cập nhật mục lục.
-  Also trigger for any request involving project documentation (PRD, API, CMS, mobile, design,
-  specs, data model, flows) — even without an explicit command. If unsure whether docs-wiki
-  applies, ask the user before proceeding.
+  Single-source-of-truth documentation management — Vietnamese and English. No brainstorming.
+  Trigger when user mentions "docs", "tài liệu", "documentation", or any docs topic
+  (API, CMS, PRD, data model, flows, specs, styles, guides) —
+  ask what user wants if no explicit command, skip docs-wiki if not needed.
+  Non-obvious commands: sinh bruno / generate Bruno,
+  kiểm tra nhất quán / check consistency, dùng ở đâu / where used,
+  tạo index tìm kiếm / create search index, cập nhật mục lục / update TOC.
 globs:
 alwaysApply: false
 ---
@@ -56,6 +52,14 @@ Below, `<docs_dir>`, `<dirs.sources>`… are values resolved from config.
 2. **Anchor per `lang.anchor`, content per `lang.content`** (default EN/VI). See `references/reference-conventions.md`.
 3. **Run consistency check only when requested** — do not auto-run after every edit.
 4. **api.html is the API source of truth**, `.bru` files are generated output. Never edit `.bru` by hand.
+5. **Docs mention without explicit command** → ask in the user's language before acting.
+   Present a numbered-choice question so the user can reply with a number or type freely.
+   Example (adapt to user's language):
+   "I see you're working with docs. What would you like to do?
+   1. Use **docs-wiki** — init structure, add/edit terms/fields/flows/endpoints, restructure, check consistency, generate Bruno, etc.
+   2. Just answer my question — no docs-wiki needed
+   3. Other (describe what you need)"
+   If user picks 2 or their answer doesn't need docs-wiki → exit this skill and proceed normally.
 
 ## References
 - `references/config.md` — `.docswiki.yml` schema + resolve rules.
