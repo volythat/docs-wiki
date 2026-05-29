@@ -14,7 +14,7 @@ checks.
 
 ## Install
 
-### Claude Code / Codex / Gemini CLI
+### Linux / macOS
 
 ```bash
 ./install/install.sh claude    # → ~/.claude/skills/docs-wiki/  + ~/.claude/CLAUDE.md
@@ -22,25 +22,42 @@ checks.
 ./install/install.sh gemini    # → ~/.gemini/config/skills/docs-wiki/ + ~/.gemini/GEMINI.md
 ```
 
-Each run does two things:
+> **Convenience aliases:** `install-claude.sh`, `install-codex.sh`, and
+> `install-gemini.sh` are thin wrappers that forward to `install.sh`.
+
+### Windows (PowerShell)
+
+```powershell
+.\install\install.ps1 claude   # → ~\.claude\skills\docs-wiki\  + ~\.claude\CLAUDE.md
+.\install\install.ps1 codex    # → ~\.codex\skills\docs-wiki\   + ~\.codex\AGENTS.md
+.\install\install.ps1 gemini   # → ~\.gemini\config\skills\docs-wiki\ + ~\.gemini\GEMINI.md
+```
+
+If PowerShell blocks the script, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+Each install script (bash or PowerShell) does two things:
 1. Syncs `skill/` into the platform's skills directory
 2. Appends a trigger rule to the platform's global instruction file (idempotent — safe to re-run)
 
 The trigger rule is what makes the skill activate automatically when you mention
 docs-related topics. Re-run the script whenever you update the skill source.
 
-> **Convenience aliases:** `install-claude.sh`, `install-codex.sh`, and
-> `install-gemini.sh` are thin wrappers that forward to `install.sh` — use
-> whichever you prefer.
-
 ### Cursor
 
-Cursor rules are **project-local** — run this script once per project:
+Cursor rules are **project-local** — run this script once per project.
 
+**Linux / macOS:**
 ```bash
 ./install/install-cursor.sh /path/to/your/project
 # or from inside the project:
 /path/to/docs-wiki/install/install-cursor.sh .
+```
+
+**Windows (PowerShell):**
+```powershell
+.\install\install-cursor.ps1 C:\path\to\project
+# or from inside the project:
+\path\to\docs-wiki\install\install-cursor.ps1 .
 ```
 
 Creates `.cursor/rules/docs-wiki.mdc` + `.cursor/rules/docs-wiki/references/`
@@ -176,11 +193,13 @@ Full schema and resolve rules: [`skill/references/config.md`](skill/references/c
 │   ├── references/         # Details: config, link conventions, api.html contract, consistency checks
 │   └── templates/          # docs/ scaffolding + sample .docswiki.yml
 ├── install/
-│   ├── install.sh          # Shared logic (rsync + trigger) — used by the wrappers below
+│   ├── install.sh          # Linux/macOS: shared logic (rsync + trigger injection)
 │   ├── install-claude.sh   # Wrapper → ~/.claude/skills/docs-wiki/
 │   ├── install-codex.sh    # Wrapper → ~/.codex/skills/docs-wiki/
 │   ├── install-gemini.sh   # Wrapper → ~/.gemini/config/skills/docs-wiki/
-│   └── install-cursor.sh   # Generates the Cursor rule from SKILL.md → <project>/.cursor/rules/
+│   ├── install-cursor.sh   # Generates Cursor rule from SKILL.md → <project>/.cursor/rules/
+│   ├── install.ps1         # Windows equivalent of install.sh
+│   └── install-cursor.ps1  # Windows equivalent of install-cursor.sh
 └── README.md               # This file
 ```
 

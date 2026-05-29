@@ -9,6 +9,8 @@ không có runtime, test suite, hay build step.
 - `install/install.sh <claude|codex|gemini>` — logic dùng chung (rsync + inject trigger)
 - `install/install-claude.sh` / `install-codex.sh` / `install-gemini.sh` — wrapper mỏng gọi `install.sh` với target tương ứng (→ `~/.claude` · `~/.codex` · `~/.gemini/config`)
 - `install/install-cursor.sh <project>` — **sinh** Cursor rule từ `SKILL.md` vào `<project>/.cursor/rules/` (không có file `.mdc` viết tay)
+- `install/install.ps1 <claude|codex|gemini>` — bản Windows (PowerShell) của `install.sh`
+- `install/install-cursor.ps1 <project>` — bản Windows (PowerShell) của `install-cursor.sh`
 - `docs/` — **KHÔNG commit**, luôn untracked (spec/plan tạm thời)
 - `README.md` / `README.vi.md` — tài liệu cho người dùng (EN + VI)
 

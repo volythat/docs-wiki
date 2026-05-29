@@ -13,7 +13,7 @@ khi sửa, và có thể kiểm tra nhất quán tự động.
 
 ## Cài đặt
 
-### Claude Code / Codex / Gemini CLI
+### Linux / macOS
 
 ```bash
 ./install/install.sh claude    # → ~/.claude/skills/docs-wiki/  + ~/.claude/CLAUDE.md
@@ -21,24 +21,42 @@ khi sửa, và có thể kiểm tra nhất quán tự động.
 ./install/install.sh gemini    # → ~/.gemini/config/skills/docs-wiki/ + ~/.gemini/GEMINI.md
 ```
 
-Mỗi lần chạy làm hai việc:
+> **Alias tiện lợi:** `install-claude.sh`, `install-codex.sh`, `install-gemini.sh`
+> là wrapper mỏng gọi thẳng vào `install.sh`.
+
+### Windows (PowerShell)
+
+```powershell
+.\install\install.ps1 claude   # → ~\.claude\skills\docs-wiki\  + ~\.claude\CLAUDE.md
+.\install\install.ps1 codex    # → ~\.codex\skills\docs-wiki\   + ~\.codex\AGENTS.md
+.\install\install.ps1 gemini   # → ~\.gemini\config\skills\docs-wiki\ + ~\.gemini\GEMINI.md
+```
+
+Nếu PowerShell chặn script, chạy một lần: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+Mỗi lần chạy (bash hay PowerShell) đều làm hai việc:
 1. Đồng bộ `skill/` vào thư mục skills của platform
 2. Thêm trigger rule vào file hướng dẫn toàn cục của platform (idempotent — chạy lại nhiều lần vẫn an toàn)
 
 Trigger rule là thứ khiến skill tự kích hoạt khi bạn nhắc đến docs. Chạy lại
 script mỗi khi sửa nguồn skill để đồng bộ.
 
-> **Alias tiện lợi:** `install-claude.sh`, `install-codex.sh`, `install-gemini.sh`
-> là wrapper mỏng gọi thẳng vào `install.sh` — dùng cái nào cũng được.
-
 ### Cursor
 
-Cursor rules là **project-local** — chạy script này một lần cho mỗi dự án:
+Cursor rules là **project-local** — chạy script này một lần cho mỗi dự án.
 
+**Linux / macOS:**
 ```bash
 ./install/install-cursor.sh /đường/dẫn/dự-án
 # hoặc từ bên trong dự án:
 /đường/dẫn/docs-wiki/install/install-cursor.sh .
+```
+
+**Windows (PowerShell):**
+```powershell
+.\install\install-cursor.ps1 C:\đường\dẫn\dự-án
+# hoặc từ bên trong dự án:
+\đường\dẫn\docs-wiki\install\install-cursor.ps1 .
 ```
 
 Tạo `.cursor/rules/docs-wiki.mdc` + `.cursor/rules/docs-wiki/references/`
@@ -171,11 +189,13 @@ Schema đầy đủ + quy tắc resolve: [`skill/references/config.md`](skill/re
 │   ├── references/         # chi tiết: config, quy ước link, hợp đồng api.html, check nhất quán
 │   └── templates/          # khung docs/ + .docswiki.yml mẫu
 ├── install/
-│   ├── install.sh          # logic dùng chung (rsync + trigger) — các wrapper dưới gọi vào
+│   ├── install.sh          # Linux/macOS: logic dùng chung (rsync + inject trigger)
 │   ├── install-claude.sh   # wrapper → ~/.claude/skills/docs-wiki/
 │   ├── install-codex.sh    # wrapper → ~/.codex/skills/docs-wiki/
 │   ├── install-gemini.sh   # wrapper → ~/.gemini/config/skills/docs-wiki/
-│   └── install-cursor.sh   # sinh Cursor rule từ SKILL.md → <project>/.cursor/rules/
+│   ├── install-cursor.sh   # sinh Cursor rule từ SKILL.md → <project>/.cursor/rules/
+│   ├── install.ps1         # Windows: tương đương install.sh
+│   └── install-cursor.ps1  # Windows: tương đương install-cursor.sh
 └── README.md               # README tiếng Anh
 ```
 
