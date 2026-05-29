@@ -20,9 +20,12 @@ checks.
 ./install/install-claude.sh
 ```
 
-Copies `skill/` → `~/.claude/skills/docs-wiki/`. Re-run whenever you update
-the skill source to sync changes. After installing, open Claude Code in your
-project folder and issue commands directly — the skill activates automatically.
+Does two things:
+1. Copies `skill/` → `~/.claude/skills/docs-wiki/`
+2. Appends a trigger rule to `~/.claude/CLAUDE.md` (idempotent — safe to re-run)
+
+The trigger rule is what makes the skill activate automatically when you mention
+docs-related topics. Re-run the script whenever you update the skill source.
 
 ### Codex
 
@@ -30,7 +33,10 @@ project folder and issue commands directly — the skill activates automatically
 ./install/install-codex.sh
 ```
 
-Copies `skill/` → `~/.codex/skills/docs-wiki/` (respects `$CODEX_HOME` if set).
+Does two things:
+1. Copies `skill/` → `~/.codex/skills/docs-wiki/` (respects `$CODEX_HOME` if set)
+2. Appends a trigger rule to `~/.codex/AGENTS.md` (idempotent — safe to re-run)
+
 After installing, open Codex in your project folder and issue commands directly.
 
 ### Gemini CLI
@@ -39,8 +45,11 @@ After installing, open Codex in your project folder and issue commands directly.
 ./install/install-gemini.sh
 ```
 
-Copies `skill/` → `~/.gemini/config/skills/docs-wiki/`. After installing,
-open Gemini CLI in your project folder and issue commands directly.
+Does two things:
+1. Copies `skill/` → `~/.gemini/config/skills/docs-wiki/`
+2. Appends a trigger rule to `~/.gemini/GEMINI.md` (idempotent — safe to re-run)
+
+After installing, open Gemini CLI in your project folder and issue commands directly.
 
 ### Cursor
 
