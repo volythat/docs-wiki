@@ -24,6 +24,13 @@ khi sửa, và có thể kiểm tra nhất quán tự động.
 > **Alias tiện lợi:** `install-claude.sh`, `install-codex.sh`, `install-gemini.sh`
 > là wrapper mỏng gọi thẳng vào `install.sh`.
 
+Để **gỡ cài đặt**:
+```bash
+./install/install.sh uninstall claude   # xoá ~/.claude/skills/docs-wiki/ + trigger rule
+./install/install.sh uninstall codex
+./install/install.sh uninstall gemini
+```
+
 ### Windows (PowerShell)
 
 ```powershell
@@ -33,6 +40,13 @@ khi sửa, và có thể kiểm tra nhất quán tự động.
 ```
 
 Nếu PowerShell chặn script, chạy một lần: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+Để **gỡ cài đặt**:
+```powershell
+.\install\install.ps1 claude -Uninstall
+.\install\install.ps1 codex  -Uninstall
+.\install\install.ps1 gemini -Uninstall
+```
 
 Mỗi lần chạy (bash hay PowerShell) đều làm hai việc:
 1. Đồng bộ `skill/` vào thư mục skills của platform

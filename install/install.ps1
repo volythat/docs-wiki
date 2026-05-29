@@ -9,7 +9,8 @@
 param(
     [Parameter(Mandatory=$true, Position=0)]
     [ValidateSet("claude","codex","gemini")]
-    [string]$Target
+    [string]$Target,
+    [switch]$Uninstall
 )
 $ErrorActionPreference = "Stop"
 
@@ -37,6 +38,30 @@ switch ($Target) {
         $Dest        = Join-Path $env:USERPROFILE ".gemini\config\skills\docs-wiki"
         $TriggerFile = Join-Path $env:USERPROFILE ".gemini\GEMINI.md"
     }
+}
+
+if ($Uninstall) {
+    if (Test-Path $Dest) {
+        Remove-Item -Recurse -Force $Dest
+        Write-Host "Removed docs-wiki skill from $Dest"
+    } else {
+        Write-Host "docs-wiki skill not found at $Dest (already uninstalled?)"
+    }
+    if ((Test-Path $TriggerFile) -and ((Get-Content $TriggerFile -Raw) -match [regex]::Escape($Marker))) {
+        $lines    = Get-Content $TriggerFile
+        $newLines = [System.Collections.Generic.List[string]]::new()
+        $skip     = 0
+        foreach ($line in $lines) {
+            if ($line -match "<!-- $([regex]::Escape($Marker)) -->") { $skip = 2; continue }
+            if ($skip -gt 0) { $skip--; continue }
+            $newLines.Add($line)
+        }
+        [System.IO.File]::WriteAllLines($TriggerFile, $newLines.ToArray(), [System.Text.Encoding]::UTF8)
+        Write-Host "Removed docs-wiki trigger rule from $TriggerFile"
+    } else {
+        Write-Host "No docs-wiki trigger rule found in $TriggerFile"
+    }
+    exit 0
 }
 
 # Sync skill/ to destination (excluding cursor/)

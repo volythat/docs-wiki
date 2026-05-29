@@ -5,6 +5,19 @@ Scan all of `<docs_dir>` and report discrepancy types. Do NOT auto-run after eve
 > Paths below use default names (root `docs/`, `_sources`, `api/api.html`, `api/bruno`). Resolve
 > from `docs_dir`/`dirs.*` in `.docswiki.yml` if the project uses different names (see `config.md`).
 
+## Ignore patterns (from config)
+
+Before scanning, read the `ignore` array from `.docswiki.yml` (default `[]`). Each entry is a
+glob pattern relative to `<docs_dir>`. Skip any file or directory matching at least one pattern.
+
+```yaml
+ignore:
+  - "api/sdk-generated"   # skip entire generated subfolder
+  - "**/CHANGELOG.md"     # skip any CHANGELOG regardless of depth
+```
+
+Apply ignore patterns to **all 6 check types** below. Files excluded here do not appear in the report.
+
 ## 6 discrepancy types
 
 ### 1. Broken links

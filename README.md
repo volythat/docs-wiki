@@ -25,6 +25,13 @@ checks.
 > **Convenience aliases:** `install-claude.sh`, `install-codex.sh`, and
 > `install-gemini.sh` are thin wrappers that forward to `install.sh`.
 
+To **uninstall**:
+```bash
+./install/install.sh uninstall claude   # removes ~/.claude/skills/docs-wiki/ + trigger rule
+./install/install.sh uninstall codex
+./install/install.sh uninstall gemini
+```
+
 ### Windows (PowerShell)
 
 ```powershell
@@ -34,6 +41,13 @@ checks.
 ```
 
 If PowerShell blocks the script, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+To **uninstall**:
+```powershell
+.\install\install.ps1 claude -Uninstall
+.\install\install.ps1 codex  -Uninstall
+.\install\install.ps1 gemini -Uninstall
+```
 
 Each install script (bash or PowerShell) does two things:
 1. Syncs `skill/` into the platform's skills directory

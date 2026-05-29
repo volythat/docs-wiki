@@ -43,6 +43,56 @@ Templates may wrap content in `div.endpoint-doc` / `div.endpoint-code`, add `div
 `<h3>` may be a flat label (e.g. `<h3>Tạo đơn hàng</h3>`) since method/path are already in
 `data-method`/`data-path`; `div.route` is decorative and ignored by the generator.
 
+## Query parameters
+
+For GET endpoints (or any endpoint with URL query params), add `div.query-params` inside `<section>`:
+
+```html
+<div class="query-params">
+  <div class="param" data-name="status"  data-type="string"  data-required="false"
+       data-example="pending" data-desc="pending|completed|cancelled"></div>
+  <div class="param" data-name="page"    data-type="integer" data-required="false"
+       data-example="1"       data-desc="page number, 1-based"></div>
+</div>
+```
+
+**`div.param` attributes:** `data-name` (required), `data-type` (`string|integer|boolean`, optional),
+`data-required` (`true|false`, optional, default `false`), `data-example` (value written into the
+`.bru` params block — omit if no sensible default), `data-desc` (human note, NOT written to `.bru`).
+
+## Error responses
+
+Add multiple `<pre class="response">` elements with different `data-status` values:
+
+```html
+<h4>Response 201</h4>
+<pre class="response" data-status="201"><code>{"id": "string", "status": "pending"}</code></pre>
+
+<h4>Response 400</h4>
+<pre class="response" data-status="400"><code>{"error": "invalid_input", "message": "string"}</code></pre>
+
+<h4>Response 401</h4>
+<pre class="response" data-status="401"><code>{"error": "unauthorized"}</code></pre>
+```
+
+The `.bru` file records only the **first 2xx response** body (`data-status` starting with `2`).
+All other status variants are preserved as documentation in `api.html` only — they are NOT mapped
+to Bruno test assertions.
+
+## File upload (multipart)
+
+Set `data-content-type="multipart"` on `pre.request-body`. The JSON block describes the fields
+(`"file": "binary"` marks binary fields):
+
+```html
+<pre class="request-body" data-content-type="multipart"><code>{
+  "file": "binary",
+  "caption": "string"
+}</code></pre>
+```
+
+Default `data-content-type` when absent is `json`.
+
 ## Generated Bruno layout (default)
 
 ```
@@ -82,11 +132,17 @@ For each `<section class="endpoint">`:
      take the label after the `—` separator (`Tạo đơn hàng`). If no `—`, take the full stripped text.
 4. Method block (`get`/`post`/…) from `data-method` (lowercase):
    - `url: {{baseUrl}}<data-path>`
-   - `body: json` if `pre.request-body` exists, else `body: none`
+   - `body: json` if `pre.request-body` exists AND `data-content-type` is absent or `json`
+   - `body: multipart` if `pre.request-body` exists AND `data-content-type="multipart"`
+   - `body: none` if no `pre.request-body`
    - `auth: <data-auth>`
 5. `headers` block: each `div.header` → `<data-key>: <data-value>`.
    - If `data-auth="bearer"`: also add `auth:bearer { token: {{token}} }` block.
-6. `body:json` block: copy raw text from `pre.request-body > code`.
+6. `body:json` / `body:multipart` block: copy raw text from `pre.request-body > code`.
+   For multipart: emit `body:multipart { ... }` instead of `body:json { ... }`.
+7. `params:query` block: if `div.query-params` exists → each `div.param` with `data-example` →
+   `<data-name>: <data-example>`. Params without `data-example` are omitted. Skip block entirely
+   if no param has `data-example`.
 
 ## Complete example
 

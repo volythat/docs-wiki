@@ -20,6 +20,8 @@ bruno:
 project:
   name: ""                  # <title>/<h1> in api.html + README heading
   description: ""           # optional
+ignore: []                  # glob patterns for files/folders to skip in consistency checks
+                            # relative to <docs_dir>, e.g. ["api/sdk-generated", "**/CHANGELOG.md"]
 ```
 
 | Key | Default | Used by |
@@ -29,6 +31,7 @@ project:
 | `lang.anchor` / `lang.content` | `en` / `vi` | anchor conventions (`reference-conventions.md`) |
 | `bruno.base_url` / `bruno.env` | `http://localhost:3000` / `local` | Bruno generation (`api-html-contract.md`) |
 | `project.name` / `project.description` | empty | README + `api.html` |
+| `ignore` | `[]` | consistency check — glob patterns excluded from scan |
 
 ## Resolve rules (step 0)
 

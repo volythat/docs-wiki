@@ -25,3 +25,19 @@
 ## When to link vs. copy
 - Derived docs (overview/cms/mobile/design): always LINK to the definition, never copy.
 - May write contextual sentences around the link, as long as they don't repeat the definition itself.
+
+## Renaming an anchor (safe migration)
+
+Anchors are permanent identifiers — never rename without a migration path. If a rename is truly necessary:
+
+1. **Add a redirect** immediately before the renamed heading:
+   ```markdown
+   <a id="old-slug"></a>
+   ### new-slug
+   ```
+   Both anchors now resolve to the same content.
+2. **Update all outgoing links** in `<docs_dir>` from `#old-slug` to `#new-slug`.
+3. **Run "kiểm tra nhất quán"** to confirm no broken links remain.
+4. **Remove the redirect** `<a id="old-slug"></a>` only after steps 2 and 3 are complete.
+
+Never skip step 3 — broken links in derived docs are silent until a consistency check runs.
