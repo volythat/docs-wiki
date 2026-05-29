@@ -178,14 +178,15 @@ Schema đầy đủ + quy tắc resolve: [`skill/references/config.md`](skill/re
 ├── skill/                  # NGUỒN của skill (cài cái này)
 │   ├── SKILL.md            # điểm vào: lệnh + quy tắc ngầm
 │   ├── agents/             # Codex UI metadata (openai.yaml)
-│   ├── cursor/             # Cursor adapter (docs-wiki.mdc)
+│   ├── agents/             # metadata Codex UI (openai.yaml)
 │   ├── references/         # chi tiết: config, quy ước link, hợp đồng api.html, check nhất quán
 │   └── templates/          # khung docs/ + .docswiki.yml mẫu
 ├── install/
-│   ├── install-claude.sh   # copy skill/ → ~/.claude/skills/docs-wiki/
-│   ├── install-codex.sh    # copy skill/ → ~/.codex/skills/docs-wiki/
-│   ├── install-gemini.sh   # copy skill/ → ~/.gemini/config/skills/docs-wiki/
-│   └── install-cursor.sh   # copy cursor rule + references → <project>/.cursor/rules/
+│   ├── install.sh          # logic dùng chung (rsync + trigger) — các wrapper dưới gọi vào
+│   ├── install-claude.sh   # wrapper → ~/.claude/skills/docs-wiki/
+│   ├── install-codex.sh    # wrapper → ~/.codex/skills/docs-wiki/
+│   ├── install-gemini.sh   # wrapper → ~/.gemini/config/skills/docs-wiki/
+│   └── install-cursor.sh   # sinh Cursor rule từ SKILL.md → <project>/.cursor/rules/
 └── README.md               # README tiếng Anh
 ```
 

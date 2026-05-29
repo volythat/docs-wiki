@@ -182,14 +182,15 @@ Full schema and resolve rules: [`skill/references/config.md`](skill/references/c
 ├── skill/                  # Skill source (what gets installed)
 │   ├── SKILL.md            # Entry point: commands + implicit rules
 │   ├── agents/             # Codex UI metadata (openai.yaml)
-│   ├── cursor/             # Cursor adapter (docs-wiki.mdc)
+│   ├── agents/             # Codex UI metadata (openai.yaml)
 │   ├── references/         # Details: config, link conventions, api.html contract, consistency checks
 │   └── templates/          # docs/ scaffolding + sample .docswiki.yml
 ├── install/
-│   ├── install-claude.sh   # Copies skill/ → ~/.claude/skills/docs-wiki/
-│   ├── install-codex.sh    # Copies skill/ → ~/.codex/skills/docs-wiki/
-│   ├── install-gemini.sh   # Copies skill/ → ~/.gemini/config/skills/docs-wiki/
-│   └── install-cursor.sh   # Copies cursor rule + references → <project>/.cursor/rules/
+│   ├── install.sh          # Shared logic (rsync + trigger) — used by the wrappers below
+│   ├── install-claude.sh   # Wrapper → ~/.claude/skills/docs-wiki/
+│   ├── install-codex.sh    # Wrapper → ~/.codex/skills/docs-wiki/
+│   ├── install-gemini.sh   # Wrapper → ~/.gemini/config/skills/docs-wiki/
+│   └── install-cursor.sh   # Generates the Cursor rule from SKILL.md → <project>/.cursor/rules/
 └── README.md               # This file
 ```
 
