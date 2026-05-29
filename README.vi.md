@@ -13,42 +13,23 @@ khi sửa, và có thể kiểm tra nhất quán tự động.
 
 ## Cài đặt
 
-### Claude Code
+### Claude Code / Codex / Gemini CLI
 
 ```bash
-./install/install-claude.sh
+./install/install.sh claude    # → ~/.claude/skills/docs-wiki/  + ~/.claude/CLAUDE.md
+./install/install.sh codex     # → ~/.codex/skills/docs-wiki/   + ~/.codex/AGENTS.md
+./install/install.sh gemini    # → ~/.gemini/config/skills/docs-wiki/ + ~/.gemini/GEMINI.md
 ```
 
-Script làm hai việc:
-1. Copy `skill/` → `~/.claude/skills/docs-wiki/`
-2. Thêm trigger rule vào `~/.claude/CLAUDE.md` (idempotent — chạy lại nhiều lần vẫn an toàn)
+Mỗi lần chạy làm hai việc:
+1. Đồng bộ `skill/` vào thư mục skills của platform
+2. Thêm trigger rule vào file hướng dẫn toàn cục của platform (idempotent — chạy lại nhiều lần vẫn an toàn)
 
 Trigger rule là thứ khiến skill tự kích hoạt khi bạn nhắc đến docs. Chạy lại
 script mỗi khi sửa nguồn skill để đồng bộ.
 
-### Codex
-
-```bash
-./install/install-codex.sh
-```
-
-Script làm hai việc:
-1. Copy `skill/` → `~/.codex/skills/docs-wiki/` (tôn trọng `$CODEX_HOME` nếu đặt)
-2. Thêm trigger rule vào `~/.codex/AGENTS.md` (idempotent — chạy lại nhiều lần vẫn an toàn)
-
-Sau khi cài, mở Codex ở thư mục dự án và ra lệnh trực tiếp.
-
-### Gemini CLI
-
-```bash
-./install/install-gemini.sh
-```
-
-Script làm hai việc:
-1. Copy `skill/` → `~/.gemini/config/skills/docs-wiki/`
-2. Thêm trigger rule vào `~/.gemini/GEMINI.md` (idempotent — chạy lại nhiều lần vẫn an toàn)
-
-Sau khi cài, mở Gemini CLI ở thư mục dự án và ra lệnh trực tiếp.
+> **Alias tiện lợi:** `install-claude.sh`, `install-codex.sh`, `install-gemini.sh`
+> là wrapper mỏng gọi thẳng vào `install.sh` — dùng cái nào cũng được.
 
 ### Cursor
 
