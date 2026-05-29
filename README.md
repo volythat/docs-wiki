@@ -182,7 +182,6 @@ Full schema and resolve rules: [`skill/references/config.md`](skill/references/c
 ├── skill/                  # Skill source (what gets installed)
 │   ├── SKILL.md            # Entry point: commands + implicit rules
 │   ├── agents/             # Codex UI metadata (openai.yaml)
-│   ├── agents/             # Codex UI metadata (openai.yaml)
 │   ├── references/         # Details: config, link conventions, api.html contract, consistency checks
 │   └── templates/          # docs/ scaffolding + sample .docswiki.yml
 ├── install/

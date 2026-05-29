@@ -177,7 +177,6 @@ Schema đầy đủ + quy tắc resolve: [`skill/references/config.md`](skill/re
 .
 ├── skill/                  # NGUỒN của skill (cài cái này)
 │   ├── SKILL.md            # điểm vào: lệnh + quy tắc ngầm
-│   ├── agents/             # Codex UI metadata (openai.yaml)
 │   ├── agents/             # metadata Codex UI (openai.yaml)
 │   ├── references/         # chi tiết: config, quy ước link, hợp đồng api.html, check nhất quán
 │   └── templates/          # khung docs/ + .docswiki.yml mẫu
