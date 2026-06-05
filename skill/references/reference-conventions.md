@@ -4,7 +4,7 @@
 - **Anchor = slug per `lang.anchor`** (default `en`, stable identifier).
   **Display content per `lang.content`** (default `vi`).
   Renaming display label must NOT break the anchor. (`lang.*` from `.docswiki.yml`, see `config.md`.)
-- Definitions live in `<dirs.sources>/` (or `<dirs.api>/api.html` for endpoints). Everywhere else only LINKS.
+- Definitions live in `<dirs.sources>/` (or a `.bru` file in `<dirs.bruno>` for endpoints). Everywhere else only LINKS.
 
 ## Creating anchors
 
@@ -14,7 +14,7 @@
 | Entity | `_sources/data-model.md` | heading `### <lang.anchor-slug>` | `[Người dùng](_sources/data-model.md#user)` |
 | Field | `_sources/data-model.md` | `<a id="<entity>-<field>"></a>` inside table | `[email](_sources/data-model.md#user-email)` |
 | Flow | `_sources/flows.md` | heading `### <lang.anchor-slug>` | `[Thanh toán](_sources/flows.md#checkout)` |
-| Endpoint | `api/api.html` | `id="<lang.anchor-slug>"` on `<section>` | `[Tạo đơn hàng](api/api.html#create-order)` |
+| Endpoint | `.bru` in `<dirs.bruno>` | file path (slug filename per `lang.anchor`, no anchor) | `[Tạo đơn hàng](api/bruno/orders/create-order.bru)` |
 | Decision | `_sources/decisions.md` | heading `### <lang.anchor-slug>` | `[Dùng UUID](_sources/decisions.md#use-uuid-for-id)` |
 
 ## Slug rules
@@ -27,6 +27,10 @@
 - May write contextual sentences around the link, as long as they don't repeat the definition itself.
 
 ## Renaming an anchor (safe migration)
+
+> **Endpoints have no anchors** — they are identified by `.bru` file path. To rename an endpoint:
+> rename the `.bru` file, update every derived-doc link pointing to the old path, then run a
+> consistency check. The redirect trick below applies only to anchor-based sources (`_sources/`).
 
 Anchors are permanent identifiers — never rename without a migration path. If a rename is truly necessary:
 

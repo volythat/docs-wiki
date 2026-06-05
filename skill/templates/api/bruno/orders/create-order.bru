@@ -1,0 +1,28 @@
+meta {
+  name: Tạo đơn hàng
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "items": [{ "productId": "string", "qty": 0 }],
+    "note": "string"
+  }
+}
+
+docs {
+  Tạo một đơn hàng mới từ giỏ hàng hiện tại.
+
+  Body theo entity [order](../../_sources/data-model.md#order).
+}

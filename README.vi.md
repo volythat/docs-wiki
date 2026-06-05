@@ -4,7 +4,7 @@
 
 Skill tài liệu **single-source-of-truth** cho dự án app. Mỗi sự thật (thuật ngữ,
 field, flow, endpoint) định nghĩa đúng **một chỗ** trong `_sources/` (hoặc
-`api/api.html`); mọi nơi khác chỉ **link** tới. Nhờ đó tài liệu không bị lệch
+một file `.bru` trong `api/bruno/`); mọi nơi khác chỉ **link** tới. Nhờ đó tài liệu không bị lệch
 khi sửa, và có thể kiểm tra nhất quán tự động.
 
 > **Không có runtime.** Skill này là một tập chỉ dẫn Markdown cho công cụ AI.
@@ -85,13 +85,13 @@ sau:
 | Bạn nói | Skill làm gì |
 |---|---|
 | **"khởi tạo docs"** | Tạo khung thư mục `docs/` từ template + sinh `.docswiki.yml`. Không ghi đè file đã có. |
-| **"thêm/sửa thuật ngữ\|field\|endpoint\|flow X"** | Ghi định nghĩa vào nguồn (`_sources/` hoặc `api/api.html`), gợi ý chỗ nên link. Cập nhật `INDEX.md` nếu có. |
+| **"thêm/sửa thuật ngữ\|field\|endpoint\|flow X"** | Ghi định nghĩa vào nguồn (`_sources/`, hoặc file `.bru` trong `api/bruno/` cho endpoint), gợi ý chỗ nên link. Cập nhật `INDEX.md` nếu có. |
 | **"thêm/sửa quyết định X"** | Ghi Architecture Decision Record (ADR) vào `_sources/decisions.md` theo format Context / Decision / Consequences. Append-only — quyết định cũ không bao giờ bị xóa. |
 | **"thêm file docs [tên]"** | Hỏi loại tài liệu (Reference / How-to / Explanation), rồi tạo `docs/[tên].md` với link tới `_sources/` — không chép định nghĩa. "Cập nhật mục lục" chạy sau sẽ tự nhận file mới. |
-| **"phân tích docs cũ từ [folder]"** | `[folder]` chỉ được **đọc**, không bao giờ bị sửa. Yêu cầu `docs_dir` trong `.docswiki.yml` trỏ sang folder *khác*; dừng cảnh báo nếu trùng nhau. **Pha 1:** phân loại: định nghĩa → `_sources/`, tổng hợp → file dẫn xuất, endpoint → `api.html`, không rõ → liệt kê riêng. Xuất báo cáo, hỏi xác nhận. **Pha 2:** tạo file chỉ sau khi xác nhận. |
+| **"phân tích docs cũ từ [folder]"** | `[folder]` chỉ được **đọc**, không bao giờ bị sửa. Yêu cầu `docs_dir` trong `.docswiki.yml` trỏ sang folder *khác*; dừng cảnh báo nếu trùng nhau. **Pha 1:** phân loại: định nghĩa → `_sources/`, tổng hợp → file dẫn xuất, endpoint → file `.bru` trong `api/bruno/`, không rõ → liệt kê riêng. Xuất báo cáo, hỏi xác nhận. **Pha 2:** tạo file chỉ sau khi xác nhận. |
 | **"tái cấu trúc docs"** | Kiểm tra toàn bộ `docs/`, chuyển định nghĩa inline vào `_sources/`, nhóm file vào subfolder theo domain, thay nội dung chép bằng link. Từng bước có xác nhận. |
-| **"sinh bruno"** | Đọc `api/api.html`, sinh/cập nhật collection Bruno trong `api/bruno/`. |
-| **"kiểm tra nhất quán"** | Quét toàn bộ `docs/`, báo cáo 6 loại lệch: link gãy, term mồ côi, định nghĩa trùng, `.bru` lệch, anchor mồ côi, field không tồn tại. |
+| **"sinh bruno"** | Scaffold khung 1 file `.bru` trong `api/bruno/` (tạo `bruno.json` / environment nếu chưa có) để bạn điền. |
+| **"kiểm tra nhất quán"** | Quét toàn bộ `docs/`, báo cáo 6 loại lệch: link gãy, term mồ côi, định nghĩa trùng, link endpoint (`.bru`), anchor mồ côi, field không tồn tại. |
 | **"X dùng ở đâu"** | Liệt kê mọi file + dòng có link trỏ tới anchor của X. |
 | **"tạo index tìm kiếm"** | Quét toàn bộ anchor trong `_sources/`, sinh `_sources/INDEX.md` — index gọn (~100-200 token) để AI tìm kiếm nhanh. |
 | **"cập nhật mục lục"** | Sinh lại `README.md` của docs bằng cách quét thư mục (không theo danh sách cứng). |
@@ -100,7 +100,7 @@ sau:
 
 1. **Ghi nguồn trước, link sau** — không bao giờ chép định nghĩa vào doc dẫn xuất.
 2. **Anchor tiếng Anh, nội dung tiếng Việt** (mặc định, đổi được qua config).
-3. **`api.html` là gốc của API**, các file `.bru` là sản phẩm sinh ra — không sửa `.bru` bằng tay.
+3. **File `.bru` trong `api/bruno/` là gốc API** — viết tay, có khối `docs`; HTML do Bruno tự sinh, không commit.
 4. **Kiểm tra nhất quán chỉ chạy khi bạn yêu cầu**, không tự động sau mỗi lần sửa.
 
 ## Dùng với dự án đã có sẵn (migration)
@@ -147,14 +147,13 @@ Skill tạo file với các section *link tới `_sources/`*, không bao giờ c
 
 **5. Di chuyển API**
 
-Copy các endpoint từ docs cũ vào `api/api.html` theo đúng hợp đồng trong
-`skill/references/api-html-contract.md`, rồi:
-
-> `"sinh bruno"` — sinh lại toàn bộ collection Bruno từ HTML.
+Tạo lại từng endpoint thành file `.bru` trong `api/bruno/` theo hợp đồng trong
+`skill/references/bruno-contract.md` (dùng `"sinh bruno"` để tạo khung rồi điền).
+Bruno "Generate Documentation" xuất HTML hoàn chỉnh khi cần.
 
 **6. Kiểm tra nhất quán**
 
-> `"kiểm tra nhất quán"` — báo cáo link gãy, term mồ côi, `.bru` lệch, field
+> `"kiểm tra nhất quán"` — báo cáo link gãy, term mồ côi, vấn đề link endpoint, field
 > không tồn tại. Sửa hết trước khi chuyển sang dùng thật.
 
 **7. Cập nhật mục lục**
@@ -177,7 +176,6 @@ không chặn việc. Lệnh "khởi tạo docs" tự sinh file này.
 ```yaml
 docs_dir: docs              # thư mục docs (dự án khác có thể đổi tên)
 dirs:
-  api: api
   sources: _sources
   bruno: api/bruno
 lang:
@@ -200,7 +198,7 @@ Schema đầy đủ + quy tắc resolve: [`skill/references/config.md`](skill/re
 ├── skill/                  # NGUỒN của skill (cài cái này)
 │   ├── SKILL.md            # điểm vào: lệnh + quy tắc ngầm
 │   ├── agents/             # metadata Codex UI (openai.yaml)
-│   ├── references/         # chi tiết: config, quy ước link, hợp đồng api.html, check nhất quán
+│   ├── references/         # chi tiết: config, quy ước link, hợp đồng Bruno, check nhất quán
 │   └── templates/          # khung docs/ + .docswiki.yml mẫu
 ├── install/
 │   ├── install.sh          # Linux/macOS: logic dùng chung (rsync + inject trigger)

@@ -4,4 +4,4 @@
 
 ## Quản lý đơn hàng
 Màn admin thao tác trên [Đơn hàng](_sources/data-model.md#order), gọi endpoint
-[Tạo đơn hàng](api/api.html#create-order).
+[Tạo đơn hàng](api/bruno/orders/create-order.bru).

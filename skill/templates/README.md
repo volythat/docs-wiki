@@ -1,10 +1,10 @@
 # Tài liệu dự án
 
-> Single source of truth: định nghĩa nằm ở `_sources/` & `api/api.html`. Nơi khác chỉ link.
+> Single source of truth: định nghĩa nằm ở `_sources/` & file `.bru` trong `api/bruno/`. Nơi khác chỉ link.
 
 ## Điều hướng
 - [Tổng quan / PRD](overview.md)
-- [API](api/api.html)
+- [API (Bruno)](api/bruno/)
 - [CMS / Admin](cms.md)
 - [Mobile / Frontend](mobile.md)
 - [Design](design.md)

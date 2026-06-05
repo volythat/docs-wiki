@@ -4,9 +4,8 @@
 docs_dir: docs              # thư mục docs, tương đối từ folder tổng (cwd)
 
 dirs:                       # tên thư mục con, tương đối từ docs_dir
-  api: api
   sources: _sources
-  bruno: api/bruno
+  bruno: api/bruno          # nguồn API: file .bru viết tay
 
 lang:
   anchor: en                # ngôn ngữ slug/anchor (định danh ổn định)
@@ -17,5 +16,5 @@ bruno:
   env: local                # sinh environments/<env>.bru
 
 project:
-  name: ""                  # tên dự án -> tiêu đề api.html + README
+  name: ""                  # tên dự án -> README + tên collection Bruno
   description: ""

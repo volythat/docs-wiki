@@ -8,9 +8,8 @@ Skill reads this file BEFORE every command (step 0 in SKILL.md).
 ```yaml
 docs_dir: docs              # docs folder, relative from cwd
 dirs:                       # subdirectory names, relative from docs_dir
-  api: api                  #   -> <docs_dir>/api
   sources: _sources         #   -> <docs_dir>/_sources
-  bruno: api/bruno          #   -> <docs_dir>/api/bruno
+  bruno: api/bruno          #   -> <docs_dir>/api/bruno (API source of truth, hand-authored .bru)
 lang:
   anchor: en                # language for slugs/anchors
   content: vi               # language for display content
@@ -18,7 +17,7 @@ bruno:
   base_url: http://localhost:3000
   env: local                # -> environments/<env>.bru
 project:
-  name: ""                  # <title>/<h1> in api.html + README heading
+  name: ""                  # README heading + Bruno collection name
   description: ""           # optional
 ignore: []                  # glob patterns for files/folders to skip in consistency checks
                             # relative to <docs_dir>, e.g. ["api/sdk-generated", "**/CHANGELOG.md"]
@@ -27,10 +26,10 @@ ignore: []                  # glob patterns for files/folders to skip in consist
 | Key | Default | Used by |
 |---|---|---|
 | `docs_dir` | `docs` | all commands — root for path resolution |
-| `dirs.api` / `dirs.sources` / `dirs.bruno` | `api` / `_sources` / `api/bruno` | all file-writing commands |
+| `dirs.sources` / `dirs.bruno` | `_sources` / `api/bruno` | all file-writing commands |
 | `lang.anchor` / `lang.content` | `en` / `vi` | anchor conventions (`reference-conventions.md`) |
-| `bruno.base_url` / `bruno.env` | `http://localhost:3000` / `local` | Bruno generation (`api-html-contract.md`) |
-| `project.name` / `project.description` | empty | README + `api.html` |
+| `bruno.base_url` / `bruno.env` | `http://localhost:3000` / `local` | Bruno `.bru` (`bruno-contract.md`) |
+| `project.name` / `project.description` | empty | README + Bruno collection name |
 | `ignore` | `[]` | consistency check — glob patterns excluded from scan |
 
 ## Resolve rules (step 0)

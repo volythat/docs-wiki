@@ -2,7 +2,7 @@
 
 Scan all of `<docs_dir>` and report discrepancy types. Do NOT auto-run after every edit.
 
-> Paths below use default names (root `docs/`, `_sources`, `api/api.html`, `api/bruno`). Resolve
+> Paths below use default names (root `docs/`, `_sources`, `api/bruno`). Resolve
 > from `docs_dir`/`dirs.*` in `.docswiki.yml` if the project uses different names (see `config.md`).
 
 ## Ignore patterns (from config)
@@ -24,12 +24,14 @@ Apply ignore patterns to **all 6 check types** below. Files excluded here do not
 Every markdown link `(<path>#<anchor>)` pointing to a file inside docs MUST have an existing anchor.
 Two valid path styles — scan both:
 - **Derived docs** (overview/cms/mobile/design at root of `docs/`): include directory prefix,
-  e.g. `(_sources/glossary.md#shopping-cart)`, `(api/api.html#create-order)`.
+  e.g. `(_sources/glossary.md#shopping-cart)`. Endpoint links point to a `.bru` file path
+  (no anchor), e.g. `(api/bruno/orders/create-order.bru)` — see Type 4.
 - **Internal links between `_sources/` files**: sibling-style, NO `_sources/` prefix,
   e.g. `(glossary.md#shopping-cart)`, `(data-model.md#order)` (as seen in `flows.md`).
 
 How to scan:
-- Grep all links `(<path>.md#<anchor>)` and `(<path>.html#<anchor>)` in `<docs_dir>`.
+- Grep all links `(<path>.md#<anchor>)` in `<docs_dir>` for anchor-based targets.
+  `.bru` file-path links (no anchor) are checked in Type 4, not here.
 - **Base resolve = directory of the file containing the link** (not root `docs/`). This rule applies
   to both styles: derived doc at root → `_sources/glossary.md` resolves to `docs/_sources/glossary.md`;
   `flows.md` inside `_sources/` → `glossary.md` resolves to `docs/_sources/glossary.md`.
@@ -52,14 +54,13 @@ A definition that is repeated inline in a derived doc.
 - Find entity/field/flow descriptions in derived docs that duplicate content in `_sources`.
 - Report: "should be replaced with a link to `_sources/...#anchor`".
 
-### 4. .bru vs. api.html drift
-- List endpoints from `<dirs.api>/api.html` (each `<section data-method data-path>`).
-- List `.bru` files in `<dirs.bruno>`.
-- Report: endpoints in html but missing a .bru; surplus .bru with no html counterpart;
-  method/path/body mismatches.
-- Report: endpoints with `data-deprecated="true"` in api.html that are still linked from derived docs —
-  use the same link grep from type 1 to find `(api.html#<slug>)` in files outside `_sources/`;
-  warn "deprecated endpoint is still being referenced".
+### 4. Endpoint links (.bru)
+`.bru` files in `<dirs.bruno>` are the API source. Check the links between them and derived docs:
+- **Broken endpoint link:** any `(<path>.bru)` link in derived docs whose target file does not exist.
+- **Orphan endpoint:** a `.bru` file in `<dirs.bruno>` not linked from any derived doc (like an
+  orphan anchor in Type 5). Skip `bruno.json` and files under `environments/`.
+- **Deprecated still referenced:** a `.bru` whose `docs` block starts with `> **DEPRECATED**` but is
+  still linked from a derived doc — grep `(<path>.bru)` in files outside `_sources/`; warn.
 
 ### 5. Orphan anchors (defined but not referenced)
 Anchors defined in `<dirs.sources>/` but not linked from any derived doc.
@@ -74,9 +75,13 @@ Anchors defined in `<dirs.sources>/` but not linked from any derived doc.
   if the anchor has existed a long time with no incoming links.
 
 ### 6. Non-existent fields / type mismatch
-- For each `data-ref="data-model.md#<entity>"` in api.html: check whether fields in the
-  request-body exist in that entity in `data-model.md`.
-- Report fields used in the API that data-model does not define.
+- For each `.bru` file in `<dirs.bruno>`: read the `docs` block and find a link
+  `data-model.md#<entity>` (the body's declared source entity).
+- Compare the keys in the `.bru` `body:json` block against the fields of that entity in
+  `<dirs.sources>/data-model.md`.
+- Report fields used in the `.bru` body that data-model does not define.
+- A `.bru` with a `body:json` but no `data-model` link in its `docs` block → report as a hint
+  ("body entity not declared"), not an error.
 
 ## Report template
 
@@ -92,14 +97,15 @@ Anchors defined in `<dirs.sources>/` but not linked from any derived doc.
 ### Duplicate definitions (n)
 - overview.md:15-20 copies Order definition → should link _sources/data-model.md#order
 
-### .bru drift (n)
-- api.html has endpoint #refund-order but api/bruno/refund-order.bru is missing
+### Endpoint links (n)
+- mobile.md:30 → api/bruno/orders/refund-order.bru  (file not found)
+- api/bruno/orders/list-orders.bru is not linked from any derived doc (orphan endpoint)
 
 ### Orphan anchors (n)
 - _sources/glossary.md#loyalty-points has no references from any derived doc
 
 ### Non-existent fields (n)
-- api.html #create-order uses field "coupon" not found in data-model.md#order
+- api/bruno/orders/create-order.bru body uses field "coupon" not in data-model.md#order
 
 Total: n issues.
 ```
