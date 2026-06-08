@@ -103,6 +103,38 @@ sau:
 3. **File `.bru` trong `api/bruno/` là gốc API** — viết tay, có khối `docs`; HTML do Bruno tự sinh, không commit.
 4. **Kiểm tra nhất quán chỉ chạy khi bạn yêu cầu**, không tự động sau mỗi lần sửa.
 
+## Dashboard
+
+`skill/dashboard/build.js` sinh ra một file `dashboard.html` tự chứa — single-page app hiển thị toàn bộ docs và API endpoint trong trình duyệt.
+
+**Tính năng:** điều hướng sidebar, tìm kiếm toàn văn (`⌘K`), chế độ sáng/tối, hỗ trợ Mermaid diagram, nút copy trên code block, outline heading bên phải, và trang tổng quan với thống kê.
+
+### Cài đặt
+
+```bash
+cd skill/dashboard
+npm install
+```
+
+### Chạy
+
+```bash
+# Từ thư mục gốc dự án (tự đọc .docswiki.yml)
+node /đường/dẫn/docs-wiki/skill/dashboard/build.js
+
+# Chỉ định đường dẫn rõ ràng
+node /đường/dẫn/docs-wiki/skill/dashboard/build.js --docs=docs --out=dashboard.html
+```
+
+| Flag | Mặc định | Mô tả |
+|---|---|---|
+| `--docs=<path>` | `docs_dir` từ `.docswiki.yml` | Thư mục docs cần quét |
+| `--out=<path>` | `dashboard.html` ở thư mục gốc | File HTML đầu ra |
+
+File sinh ra hoàn toàn tự chứa — mở bằng bất kỳ trình duyệt nào, không cần server.
+
+---
+
 ## Dùng với dự án đã có sẵn (migration)
 
 Nếu dự án đã có docs (dù lộn xộn), cách an toàn nhất là **tái cấu trúc vào
@@ -198,6 +230,9 @@ Schema đầy đủ + quy tắc resolve: [`skill/references/config.md`](skill/re
 ├── skill/                  # NGUỒN của skill (cài cái này)
 │   ├── SKILL.md            # điểm vào: lệnh + quy tắc ngầm
 │   ├── agents/             # metadata Codex UI (openai.yaml)
+│   ├── dashboard/          # Bộ sinh dashboard HTML độc lập
+│   │   ├── build.js        # node build.js → dashboard.html
+│   │   └── package.json    # dependency duy nhất: marked
 │   ├── references/         # chi tiết: config, quy ước link, hợp đồng Bruno, check nhất quán
 │   └── templates/          # khung docs/ + .docswiki.yml mẫu
 ├── install/
