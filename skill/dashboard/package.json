@@ -1,0 +1,7 @@
+{
+  "name": "docs-wiki-dashboard",
+  "private": true,
+  "dependencies": {
+    "marked": "^9.1.6"
+  }
+}

@@ -63,6 +63,12 @@ mkdir -p "$DEST"
 rsync -a --delete --exclude 'cursor/' "$SRC/" "$DEST/"
 echo "Installed docs-wiki skill to $DEST"
 
+# Install dashboard dependencies if Node.js is available.
+if command -v npm &>/dev/null && [ -f "$DEST/dashboard/package.json" ]; then
+  npm install --prefix "$DEST/dashboard" --silent
+  echo "Installed dashboard dependencies at $DEST/dashboard"
+fi
+
 # Append trigger rule to the platform's global instruction file (idempotent).
 if ! grep -q "$MARKER" "$TRIGGER_FILE" 2>/dev/null; then
   mkdir -p "$(dirname "$TRIGGER_FILE")"
