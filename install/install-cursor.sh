@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 # Usage: ./install/install-cursor.sh [project-path]
+#        ./install/install-cursor.sh uninstall [project-path]
 # Defaults to current directory if no argument given.
 #
 # The Cursor rule (docs-wiki.mdc) is GENERATED from skill/SKILL.md so the command
 # table lives in exactly one place (the skill's own single-source-of-truth rule
 # applied to itself). Only the Cursor-specific frontmatter + path note are added here.
 set -euo pipefail
+
+if [ "${1:-}" = "uninstall" ]; then
+  PROJECT="${2:-.}"
+  RULES_DIR="$PROJECT/.cursor/rules"
+  if [ -e "$RULES_DIR/docs-wiki.mdc" ] || [ -d "$RULES_DIR/docs-wiki" ] || [ -e "$RULES_DIR/docs-wiki-trigger.mdc" ]; then
+    rm -rf "$RULES_DIR/docs-wiki" "$RULES_DIR/docs-wiki.mdc" "$RULES_DIR/docs-wiki-trigger.mdc"
+    echo "Removed docs-wiki Cursor rules from $RULES_DIR"
+  else
+    echo "docs-wiki Cursor rules not found in $RULES_DIR (already uninstalled?)"
+  fi
+  exit 0
+fi
 
 PROJECT="${1:-.}"
 SRC_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

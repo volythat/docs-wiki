@@ -78,6 +78,14 @@ Creates `.cursor/rules/docs-wiki.mdc` + `.cursor/rules/docs-wiki/references/`
 and `.cursor/rules/docs-wiki/templates/` in the target project. The rule
 activates automatically when you issue docs-wiki commands in Cursor.
 
+To **uninstall** (removes all docs-wiki rules from the project):
+```bash
+./install/install-cursor.sh uninstall /path/to/your/project
+```
+```powershell
+.\install\install-cursor.ps1 C:\path\to\project -Uninstall
+```
+
 ## Usage
 
 After installing, talk to your AI in natural language. The skill recognises

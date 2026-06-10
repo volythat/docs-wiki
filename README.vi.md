@@ -77,6 +77,14 @@ Tạo `.cursor/rules/docs-wiki.mdc` + `.cursor/rules/docs-wiki/references/`
 và `.cursor/rules/docs-wiki/templates/` trong dự án. Rule tự kích hoạt khi bạn
 ra lệnh docs-wiki trong Cursor.
 
+Để **gỡ cài đặt** (xóa toàn bộ rule docs-wiki khỏi dự án):
+```bash
+./install/install-cursor.sh uninstall /đường/dẫn/dự-án
+```
+```powershell
+.\install\install-cursor.ps1 C:\đường\dẫn\dự-án -Uninstall
+```
+
 ## Cách dùng
 
 Sau khi cài, nói chuyện với AI bằng ngôn ngữ tự nhiên. Skill nhận diện các lệnh

@@ -5,10 +5,12 @@
 .EXAMPLE
     .\install\install-cursor.ps1 C:\path\to\project
     .\install\install-cursor.ps1 .
+    .\install\install-cursor.ps1 . -Uninstall
 #>
 param(
     [Parameter(Position=0)]
-    [string]$Project = "."
+    [string]$Project = ".",
+    [switch]$Uninstall
 )
 $ErrorActionPreference = "Stop"
 
@@ -18,6 +20,18 @@ $SkillMd  = Join-Path $SkillSrc "SKILL.md"
 $RulesDir = Join-Path $Project ".cursor\rules"
 
 if (-not (Test-Path $Project))  { Write-Error "Project directory not found: $Project"; exit 1 }
+
+if ($Uninstall) {
+    $found = $false
+    foreach ($item in @("docs-wiki", "docs-wiki.mdc", "docs-wiki-trigger.mdc")) {
+        $p = Join-Path $RulesDir $item
+        if (Test-Path $p) { Remove-Item -Recurse -Force $p; $found = $true }
+    }
+    if ($found) { Write-Host "Removed docs-wiki Cursor rules from $RulesDir" }
+    else        { Write-Host "docs-wiki Cursor rules not found in $RulesDir (already uninstalled?)" }
+    exit 0
+}
+
 if (-not (Test-Path $SkillMd))  { Write-Error "Cannot find $SkillMd"; exit 1 }
 
 New-Item -ItemType Directory -Force -Path "$RulesDir\docs-wiki\references" | Out-Null
