@@ -75,6 +75,13 @@ Get-ChildItem -Path $SkillSrc -Exclude "cursor" | ForEach-Object {
 }
 Write-Host "Installed docs-wiki skill to $Dest"
 
+# Install dashboard dependencies if Node.js is available.
+$DashboardDir = Join-Path $Dest "dashboard"
+if ((Get-Command npm -ErrorAction SilentlyContinue) -and (Test-Path (Join-Path $DashboardDir "package.json"))) {
+    npm install --prefix $DashboardDir --silent
+    Write-Host "Installed dashboard dependencies at $DashboardDir"
+}
+
 # Append trigger rule (idempotent)
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $TriggerFile) | Out-Null
 $alreadyPresent = (Test-Path $TriggerFile) -and ((Get-Content $TriggerFile -Raw) -match [regex]::Escape($Marker))

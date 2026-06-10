@@ -3,22 +3,71 @@ const path = require('path');
 const { marked } = require('marked');
 
 const args = process.argv.slice(2);
-const docsArg = args.find(a => a.startsWith('--docs='))?.slice(7) || args[args.indexOf('--docs') + 1];
-const outArg  = args.find(a => a.startsWith('--out='))?.slice(6)  || args[args.indexOf('--out')  + 1];
+function argValue(flag) {
+  const eq = args.find(a => a.startsWith(flag + '='));
+  if (eq) return eq.slice(flag.length + 1);
+  const i = args.indexOf(flag);
+  return i !== -1 ? args[i + 1] : undefined;
+}
+const docsArg = argValue('--docs');
+const outArg  = argValue('--out');
+
+// Strip trailing "# comment" and surrounding quotes from a YAML scalar.
+function ymlValue(raw) {
+  return raw?.replace(/\s+#.*$/, '').trim().replace(/^["']|["']$/g, '') || null;
+}
+
+function parseIgnoreList(yml) {
+  const lines = yml.split('\n');
+  const i = lines.findIndex(l => /^ignore:/.test(l));
+  if (i === -1) return [];
+  const inline = lines[i].match(/^ignore:\s*\[(.*)\]/);
+  if (inline) {
+    return inline[1].split(',').map(s => ymlValue(s)).filter(Boolean);
+  }
+  const out = [];
+  for (let j = i + 1; j < lines.length; j++) {
+    const m = lines[j].match(/^\s+-\s*(.+)$/);
+    if (!m) break;
+    const val = ymlValue(m[1]);
+    if (val) out.push(val);
+  }
+  return out;
+}
 
 function readDocswiki(cwd) {
   const p = path.join(cwd, '.docswiki.yml');
   if (!fs.existsSync(p)) return null;
   const yml = fs.readFileSync(p, 'utf8');
-  const docsDir = yml.match(/^docs_dir:\s*(.+)/m)?.[1]?.trim();
-  const name    = yml.match(/^\s+name:\s*(.+)/m)?.[1]?.trim();
-  return docsDir ? { docsDir: path.resolve(cwd, docsDir), name } : null;
+  const docsDir = ymlValue(yml.match(/^docs_dir:\s*(.+)/m)?.[1]);
+  const name    = ymlValue(yml.match(/^\s+name:\s*(.+)/m)?.[1]);
+  const sources = ymlValue(yml.match(/^\s+sources:\s*(.+)/m)?.[1]);
+  return {
+    docsDir: docsDir ? path.resolve(cwd, docsDir) : null,
+    name,
+    sources,
+    ignore: parseIgnoreList(yml),
+  };
 }
 
-const wiki = !docsArg ? readDocswiki(process.cwd()) : null;
-const DOCS_DIR    = docsArg  ? path.resolve(docsArg) : wiki?.docsDir ?? path.join(__dirname, 'docs_v2');
-const OUTPUT      = outArg   ? path.resolve(outArg)  : path.join(wiki ? process.cwd() : __dirname, 'dashboard.html');
+// Glob (relative to docs_dir) → RegExp; supports * (one segment) and ** (across segments).
+function globToRegex(glob) {
+  const re = glob
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*\*\//g, '\u0000/')
+    .replace(/\*\*/g, '\u0000')
+    .replace(/\*/g, '[^/]*')
+    .replace(/\u0000\//g, '(?:.*/)?')
+    .replace(/\u0000/g, '.*');
+  return new RegExp('^' + re + '(?:/|$)');
+}
+
+const wiki = readDocswiki(process.cwd());
+const DOCS_DIR     = docsArg ? path.resolve(docsArg) : wiki?.docsDir ?? path.resolve(process.cwd(), 'docs');
+const OUTPUT       = outArg  ? path.resolve(outArg)  : path.join(process.cwd(), 'dashboard.html');
 const PROJECT_NAME = wiki?.name ?? 'Docs';
+const SOURCES_DIR  = wiki?.sources ?? '_sources';
+const IGNORE       = (wiki?.ignore ?? []).map(globToRegex);
 
 marked.use({
   renderer: {
@@ -797,17 +846,20 @@ function parseBruFile({ full, rel }) {
 }
 
 function buildNavTree(docs, endpoints) {
-  function docsByFolder(folder) {
-    return docs.filter(d => {
-      const norm = d.path.split(path.sep).join('/');
-      return norm.startsWith(folder + '/') && norm.endsWith('.md');
-    });
-  }
-
-  const rootDocs = docs.filter(d => {
+  // Group docs by top-level folder under docs_dir — scan-based, no hardcoded folder names,
+  // so any project structure (features/, monetization/, …) shows up in the sidebar.
+  const rootDocs = [];
+  const byFolder = new Map();
+  for (const d of docs) {
     const norm = d.path.split(path.sep).join('/');
-    return !norm.includes('/') && norm.endsWith('.md');
-  });
+    const slash = norm.indexOf('/');
+    if (slash === -1) { rootDocs.push(d); continue; }
+    const folder = norm.slice(0, slash);
+    if (!byFolder.has(folder)) byFolder.set(folder, []);
+    byFolder.get(folder).push(d);
+  }
+  const sourceDocs = byFolder.get(SOURCES_DIR) || [];
+  byFolder.delete(SOURCES_DIR);
 
   // Group endpoints by domain, preserving folder order
   const seen = new Set();
@@ -821,14 +873,17 @@ function buildNavTree(docs, endpoints) {
     endpoints: endpoints.filter(e => e.domain === domain),
   }));
 
+  const folderGroups = [...byFolder.keys()].sort().map(folder => ({
+    id: 'folder-' + folder,
+    label: '📁 ' + folder,
+    items: byFolder.get(folder),
+  }));
+
   return [
     { id: 'overview', label: '📋 Overview', items: [] },
     { id: 'api', label: '📡 API', items: apiItems },
-    { id: 'screens', label: '📱 Screens', items: docsByFolder('screens') },
-    { id: 'design', label: '🎨 Design', items: docsByFolder('design') },
-    { id: 'content', label: '📦 Content', items: docsByFolder('content') },
-    { id: 'integrations', label: '🔗 Integrations', items: docsByFolder('integrations') },
-    { id: 'sources', label: '📚 Sources', items: docsByFolder('_sources') },
+    ...folderGroups,
+    { id: 'sources', label: '📚 Sources', items: sourceDocs },
     { id: 'root', label: '📄 Root', items: rootDocs },
   ];
 }
@@ -1275,7 +1330,16 @@ function handleScrollSpy() {
 }
 
 function main() {
-  const allFiles = walkDir(DOCS_DIR);
+  if (!fs.existsSync(DOCS_DIR)) {
+    console.error(`Docs folder not found: ${DOCS_DIR}`);
+    console.error('Pass --docs=<dir> or set docs_dir in .docswiki.yml at the project root.');
+    process.exit(1);
+  }
+
+  const allFiles = walkDir(DOCS_DIR).filter(f => {
+    const rel = f.rel.split(path.sep).join('/');
+    return !IGNORE.some(re => re.test(rel));
+  });
 
   const mdFiles = allFiles.filter(f => f.rel.endsWith('.md'));
   const bruFiles = allFiles.filter(f =>
@@ -1311,5 +1375,5 @@ function main() {
 if (process.env.TEST !== '1') {
   main();
 } else {
-  module.exports = { walkDir, encodeHash, parseMdFile, parseBruFile, buildNavTree, buildSearchIndex };
+  module.exports = { walkDir, encodeHash, parseMdFile, parseBruFile, buildNavTree, buildSearchIndex, globToRegex, parseIgnoreList };
 }
